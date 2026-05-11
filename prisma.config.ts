@@ -8,6 +8,7 @@ export default defineConfig({
   },
   datasource: {
     url: process.env.DATABASE_URL,
+    // @ts-ignore - Prisma 7 type definition fix
     directUrl: process.env.DIRECT_URL,
   },
 });
