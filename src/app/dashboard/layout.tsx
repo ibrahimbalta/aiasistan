@@ -13,7 +13,9 @@ import {
   LogOut,
   Sparkles,
   ChevronRight,
-  User
+  User,
+  Menu,
+  X
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -21,6 +23,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -30,6 +33,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
     getUser();
   }, [supabase]);
+
+  // Sayfa değiştiğinde mobilde menüyü kapat
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
 
   const menuItems = [
     { label: "Genel Bakış", icon: <LayoutDashboard className="w-5 h-5" />, href: "/dashboard" },
@@ -46,22 +54,39 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="flex h-screen bg-[#FDFCFD]">
+    <div className="flex h-screen bg-[#FDFCFD] overflow-hidden">
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-sm z-[90] lg:hidden animate-in fade-in duration-300"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-80 bg-[#6B2D5C] text-white flex flex-col p-8 shrink-0 relative overflow-hidden shadow-[10px_0_50px_rgba(107,45,92,0.1)]">
+      <aside className={`
+        fixed inset-y-0 left-0 z-[100] w-80 bg-[#6B2D5C] text-white flex flex-col p-8 transition-transform duration-500 ease-in-out
+        lg:relative lg:translate-x-0 lg:z-10
+        ${isSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}
+      `}>
         <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-[-10%] left-[-10%] w-64 h-64 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Logo */}
-        <Link href="/dashboard" className="flex items-center gap-4 mb-12 relative z-10 group">
-          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
-            <Bot className="w-7 h-7 text-[#6B2D5C]" />
-          </div>
-          <span className="text-2xl font-black uppercase tracking-tighter italic">AI ASİSTAN</span>
-        </Link>
+        {/* Logo & Close Button (Mobile) */}
+        <div className="flex items-center justify-between mb-12 relative z-10">
+          <Link href="/dashboard" className="flex items-center gap-4 group">
+            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform shrink-0">
+              <Bot className="w-7 h-7 text-[#6B2D5C]" />
+            </div>
+            <span className="text-2xl font-black uppercase tracking-tighter italic whitespace-nowrap">AI ASİSTAN</span>
+          </Link>
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 hover:bg-white/10 rounded-xl transition-colors">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-2 relative z-10">
+        <nav className="flex-1 space-y-2 relative z-10 overflow-y-auto pr-2 scrollbar-hide">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -87,7 +112,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         {/* Footer Settings & User */}
-        <div className="mt-auto space-y-6 relative z-10">
+        <div className="mt-auto pt-6 space-y-6 relative z-10">
           <Link
             href="/dashboard/settings"
             className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${
@@ -102,7 +127,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <div className="p-6 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-sm">
              <div className="flex items-center gap-4 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-pink-500 flex items-center justify-center font-black text-white shadow-lg">
+                <div className="w-10 h-10 rounded-xl bg-pink-500 flex items-center justify-center font-black text-white shadow-lg shrink-0">
                    {user?.email?.[0].toUpperCase() || "A"}
                 </div>
                 <div className="flex flex-col min-w-0">
@@ -123,23 +148,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header Bar */}
-        <header className="h-24 border-b border-zinc-100 flex items-center justify-between px-10 shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-           <div className="flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse" />
-              <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.4em]">YÖNETİM PANELİ V2.0</span>
+        <header className="h-20 lg:h-24 border-b border-zinc-100 flex items-center justify-between px-6 lg:px-10 shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+           <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setIsSidebarOpen(true)}
+                className="lg:hidden p-3 bg-zinc-50 border border-zinc-100 rounded-2xl text-[#6B2D5C] shadow-sm hover:bg-zinc-100 transition-all"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              <div className="flex items-center gap-3">
+                 <Sparkles className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-500 animate-pulse" />
+                 <span className="text-[9px] lg:text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] lg:tracking-[0.4em] whitespace-nowrap">YÖNETİM PANELİ V2.0</span>
+              </div>
            </div>
+           
            <div className="flex items-center gap-6">
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full border border-green-100">
+              <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full border border-green-100">
                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                  <span className="text-[10px] font-black text-green-700 uppercase tracking-widest">SİSTEM AKTİF</span>
               </div>
-              <div className="w-10 h-10 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-400">
+              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-400">
                  <User className="w-5 h-5" />
               </div>
            </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-10 bg-[#FDFCFD]">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-10 bg-[#FDFCFD]">
           <div className="max-w-7xl mx-auto h-full">
             {children}
           </div>

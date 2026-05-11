@@ -37,7 +37,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
         {[
           { label: "Aktif Asistanlar", value: assistants.length.toString(), icon: <MessageSquare className="w-5 h-5" />, color: "bg-pink-100 text-[#D63384]" },
           { label: "Toplam Konuşma", value: totalChats.toString(), icon: <Users className="w-5 h-5" />, color: "bg-blue-100 text-blue-600" },
