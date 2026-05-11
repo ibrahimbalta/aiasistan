@@ -51,21 +51,22 @@ export async function updateAssistant(id: string, data: {
     });
 
     revalidatePath(`/dashboard/${id}`);
+    revalidatePath(`/chat/${id}`);
     return { success: true, assistant };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
 }
 
-export async function getPublicAssistant(id: string) {
+export async function getChatAssistant(id: string) {
   try {
     const assistant = await prisma.assistant.findUnique({
       where: { id },
-      select: {
-        id: true,
-        name: true,
-        theme: true,
-      },
+      include: {
+        knowledge: {
+          select: { id: true } // Sadece varlığını kontrol etmek için
+        }
+      }
     });
 
     if (!assistant) throw new Error("Asistan bulunamadı");

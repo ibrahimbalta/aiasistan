@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Send, Bot, User, Loader2, Sparkles, Zap, Shield, Globe, Terminal, Layout, Monitor, Ghost, Diamond, ShoppingBag, Landmark, Palette, Gavel } from "lucide-react";
-import { getAssistant } from "@/actions/assistant-actions";
+import { getChatAssistant } from "@/actions/assistant-actions";
+import { toast } from "react-hot-toast";
 
 export default function PublicChatPage({ params }: { params: Promise<{ assistantId: string }> }) {
   const [assistant, setAssistant] = useState<any>(null);
@@ -18,10 +19,12 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
   useEffect(() => {
     if (!assistantId) return;
     async function load() {
-      const result = await getAssistant(assistantId);
+      const result = await getChatAssistant(assistantId);
       if (result.success) {
         setAssistant(result.assistant);
         setMessages([{ role: "assistant", content: result.assistant.welcomeMessage || `Merhaba! Ben ${result.assistant.name}. Size nasıl yardımcı olabilirim?` }]);
+      } else {
+        toast.error("Asistan yüklenemedi.");
       }
       setFetching(false);
     }
@@ -113,11 +116,10 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           botBubble: "bg-zinc-100 shadow-[6px_6px_12px_#bebebe,-6px_-6px_12px_#ffffff] text-zinc-800 rounded-[2rem]",
           input: "bg-zinc-100 shadow-[inset_4px_4px_8px_#bebebe,inset_-4px_-4px_8px_#ffffff] border-none text-zinc-900 placeholder-zinc-400",
           sendBtn: "bg-[#D63384] text-white shadow-lg",
-          text: "text-zinc-900 font-black", // Fixed contrast
-          subtext: "text-zinc-500 font-bold", // Fixed contrast
+          text: "text-zinc-900 font-black",
+          subtext: "text-zinc-500 font-bold",
           icon: <Monitor className="w-5 h-5 text-zinc-400" />
         };
-      // NEW SECTOR-SPECIFIC THEMES
       case "ecommerce":
         return {
           container: "bg-white border-none shadow-[0_20px_50px_rgba(255,107,0,0.15)] rounded-[2.5rem]",
@@ -184,7 +186,7 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
   const s = getThemeStyles();
 
   if (fetching) return (
-    <div className="h-screen bg-zinc-50 flex items-center justify-center">
+    <div className="h-[100dvh] bg-zinc-50 flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="w-12 h-12 text-[#D63384] animate-spin" />
         <p className="text-sm font-black text-zinc-400 uppercase tracking-widest animate-pulse">Asistan Bağlanıyor...</p>
@@ -193,17 +195,17 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
   );
 
   return (
-    <div className={`h-screen flex items-center justify-center p-4 md:p-8 bg-zinc-100/50 transition-all`}>
-      <div className={`w-full max-w-4xl h-full max-h-[900px] flex flex-col overflow-hidden transition-all duration-500 ${s.container}`}>
+    <div className={`h-[100dvh] flex items-center justify-center bg-zinc-100/50 transition-all overflow-hidden`}>
+      <div className={`w-full max-w-4xl h-full md:h-[90dvh] md:max-h-[850px] flex flex-col overflow-hidden transition-all duration-500 shadow-2xl md:rounded-[3rem] ${s.container}`}>
         
         {/* Header */}
-        <div className={`p-6 flex items-center justify-between shrink-0 relative z-10 ${s.header}`}>
+        <div className={`p-5 md:p-6 flex items-center justify-between shrink-0 relative z-10 ${s.header}`}>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center shadow-inner">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl flex items-center justify-center shadow-inner">
               {s.icon}
             </div>
             <div>
-              <h1 className={`text-xl font-black uppercase tracking-tight leading-none mb-1 ${s.text}`}>{assistant?.name}</h1>
+              <h1 className={`text-lg md:text-xl font-black uppercase tracking-tight leading-none mb-1 ${s.text}`}>{assistant?.name}</h1>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${s.subtext}`}>● AKTİF</span>
@@ -214,18 +216,18 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 scrollbar-hide">
-          <div className="text-center py-12 opacity-20 flex flex-col items-center gap-4">
-            <Bot className={`w-16 h-16 ${s.text}`} />
-            <span className={`text-sm font-black uppercase tracking-[0.5em] ${s.text}`}>BAĞLANTI KURULDU</span>
+        <div className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 md:space-y-8 scrollbar-hide bg-transparent">
+          <div className="text-center py-8 md:py-12 opacity-10 flex flex-col items-center gap-4">
+            <Bot className={`w-12 h-12 md:w-16 md:h-16 ${s.text}`} />
+            <span className={`text-[10px] md:text-sm font-black uppercase tracking-[0.5em] ${s.text}`}>GÜVENLİ BAĞLANTI</span>
           </div>
 
           {messages.map((m, i) => (
-            <div key={i} className={`flex gap-4 animate-in slide-in-from-bottom-4 duration-500 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? s.botBubble : s.userBubble}`}>
-                {m.role === "assistant" ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
+            <div key={i} className={`flex gap-3 md:gap-4 animate-in slide-in-from-bottom-4 duration-500 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
+              <div className={`w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? s.botBubble : s.userBubble}`}>
+                {m.role === "assistant" ? <Bot className="w-4 h-4 md:w-5 md:h-5" /> : <User className="w-4 h-4 md:w-5 md:h-5" />}
               </div>
-              <div className={`max-w-[80%] p-5 text-sm leading-relaxed shadow-sm ${m.role === "assistant" ? s.botBubble : s.userBubble}`}>
+              <div className={`max-w-[85%] md:max-w-[80%] p-4 md:p-5 text-sm leading-relaxed shadow-sm ${m.role === "assistant" ? s.botBubble : s.userBubble}`}>
                 {m.content}
               </div>
             </div>
@@ -234,24 +236,25 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
         </div>
 
         {/* Input Area */}
-        <div className="p-6 md:p-10 shrink-0 relative z-10">
-          <form onSubmit={handleSend} className="flex gap-3 relative">
+        <div className="p-4 md:p-8 shrink-0 relative z-10 bg-transparent border-t border-white/5">
+          <form onSubmit={handleSend} className="flex gap-2 md:gap-3 relative items-center">
             <input 
               type="text" 
               placeholder="Mesajınızı yazın..." 
-              className={`flex-1 px-8 py-5 rounded-2xl text-base font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all ${s.input}`}
+              className={`flex-1 px-5 md:px-8 py-4 md:py-5 rounded-2xl text-sm md:text-base font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all ${s.input}`}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
             <button 
               disabled={loading} 
-              className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl ${s.sendBtn}`}
+              type="submit"
+              className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl shrink-0 ${s.sendBtn}`}
             >
-              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-6 h-6" />}
+              {loading ? <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" /> : <Send className="w-5 h-5 md:w-6 md:h-6" />}
             </button>
           </form>
-          <p className={`mt-4 text-center text-[10px] font-black uppercase tracking-[0.3em] opacity-30 ${s.text}`}>
-            SİSTEM GÜVENLİĞİ AKTİF — AI PLATFORM
+          <p className={`mt-3 text-center text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] opacity-30 ${s.text}`}>
+            SECURE AI PROTOCOL V2.0
           </p>
         </div>
       </div>
