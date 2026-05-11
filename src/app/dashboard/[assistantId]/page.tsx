@@ -136,7 +136,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
   };
 
   const shareUrl = useMemo(() => `${typeof window !== 'undefined' ? window.location.origin : ''}/chat/${assistantId}`, [assistantId]);
-  const widgetCode = useMemo(() => `<iframe src="${shareUrl}" width="100%" height="600" frameborder="0"></iframe>`, [shareUrl]);
+  const widgetCode = useMemo(() => `<iframe src="${shareUrl}" width="100%" height="700" frameborder="0" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);"></iframe>`, [shareUrl]);
 
   if (fetching) {
     return (
@@ -199,10 +199,10 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
             <div className="flex-1 overflow-y-auto p-8 space-y-8">
               {messages.map((m, i) => (
                 <div key={i} className={`flex gap-4 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? s.botBubble : s.userBubble}`}>
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? "bg-[#6B2D5C] text-white" : "bg-zinc-100 text-[#D63384]"}`}>
                     {m.role === "assistant" ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
                   </div>
-                  <div className={`max-w-[75%] p-5 text-sm leading-relaxed ${m.role === "assistant" ? s.botBubble : s.userBubble}`}>
+                  <div className={`max-w-[75%] p-5 text-sm leading-relaxed ${m.role === "assistant" ? "bg-zinc-50 text-zinc-800 rounded-tl-none border border-zinc-100" : "bg-[#D63384] text-white rounded-br-none shadow-xl shadow-pink-500/10"}`}>
                     {m.content}
                   </div>
                 </div>
@@ -292,32 +292,65 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         )}
       </div>
 
-      {/* Modals */}
+      {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
            <div className="bg-white rounded-[4rem] w-full max-w-xl p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
               <div className="flex items-center justify-between mb-10">
                  <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center text-[#D63384]"><Share2 className="w-6 h-6" /></div>
-                    <h3 className="text-3xl font-black text-zinc-900 uppercase italic">Asistan Yayında!</h3>
+                    <h3 className="text-3xl font-black text-zinc-900 uppercase italic">Link Paylaş</h3>
                  </div>
-                 <button onClick={() => setShowShareModal(false)} className="p-2 bg-zinc-50 rounded-full hover:bg-zinc-100 transition-colors"><X className="w-6 h-6 text-zinc-400" /></button>
+                 <button onClick={() => setShowShareModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
               </div>
               <div className="space-y-6 mb-10">
-                 <p className="text-zinc-500 font-medium">Asistanınızı müşterilerinizle paylaşmak için aşağıdaki bağlantıyı kullanabilirsiniz.</p>
                  <div className="flex gap-2">
                     <input readOnly value={shareUrl} className="flex-1 bg-zinc-50 border border-zinc-100 rounded-2xl px-6 py-4 text-sm text-[#6B2D5C] font-mono font-bold" />
-                    <button onClick={() => {navigator.clipboard.writeText(shareUrl); toast.success("Kopyalandı!");}} className="bg-[#6B2D5C] text-white px-6 rounded-2xl hover:scale-105 transition-transform shadow-lg shadow-purple-900/10"><Copy className="w-5 h-5" /></button>
+                    <button onClick={() => {navigator.clipboard.writeText(shareUrl); toast.success("Kopyalandı!");}} className="bg-[#6B2D5C] text-white px-6 rounded-2xl hover:scale-105 transition-transform"><Copy className="w-5 h-5" /></button>
                  </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                 <a href={shareUrl} target="_blank" className="py-5 bg-[#D63384] rounded-[2rem] text-white font-black text-lg flex items-center justify-center gap-3 hover:bg-[#c22e77] transition-all shadow-xl shadow-pink-500/20 uppercase tracking-widest"><ExternalLink className="w-5 h-5" /> Test Et</a>
-                 <button onClick={() => setShowShareModal(false)} className="py-5 bg-zinc-900 rounded-[2rem] text-white font-black text-lg flex items-center justify-center gap-3 hover:bg-zinc-800 transition-all uppercase tracking-widest">Kapat</button>
+              <a href={shareUrl} target="_blank" className="w-full py-5 bg-[#D63384] rounded-[2rem] text-white font-black text-lg flex items-center justify-center gap-3 hover:bg-[#c22e77] transition-all shadow-xl shadow-pink-500/20 uppercase tracking-widest"><ExternalLink className="w-5 h-5" /> Test Et</a>
+           </div>
+        </div>
+      )}
+
+      {/* Widget Code Modal */}
+      {showWidgetModal && (
+        <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
+           <div className="bg-white rounded-[4rem] w-full max-w-2xl p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
+              <div className="flex items-center justify-between mb-10">
+                 <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-[#6B2D5C]"><Code className="w-6 h-6" /></div>
+                    <h3 className="text-3xl font-black text-zinc-900 uppercase italic">Widget Kodu</h3>
+                 </div>
+                 <button onClick={() => setShowWidgetModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
+              </div>
+              <div className="space-y-6 mb-10">
+                 <p className="text-zinc-500 font-medium">Web sitenize eklemek için aşağıdaki iframe kodunu kopyalayıp HTML dosyanıza yapıştırın.</p>
+                 <div className="relative group">
+                    <textarea 
+                      readOnly 
+                      value={widgetCode} 
+                      rows={5}
+                      className="w-full bg-zinc-50 border border-zinc-100 rounded-[2rem] p-8 text-xs font-mono text-[#6B2D5C] font-bold focus:outline-none"
+                    />
+                    <button 
+                      onClick={() => {navigator.clipboard.writeText(widgetCode); toast.success("Kod kopyalandı!");}}
+                      className="absolute bottom-6 right-6 bg-[#6B2D5C] text-white px-6 py-3 rounded-xl hover:scale-105 transition-transform shadow-lg flex items-center gap-2 font-black text-xs uppercase"
+                    >
+                      <Copy className="w-4 h-4" /> Kopyala
+                    </button>
+                 </div>
+              </div>
+              <div className="p-6 bg-yellow-50 rounded-3xl border border-yellow-100 flex gap-4">
+                 <Sparkles className="w-6 h-6 text-yellow-600 shrink-0" />
+                 <p className="text-xs text-yellow-800 font-medium">İpucu: Widget boyutlarını (width ve height) web sitenizin tasarımına göre iframe kodu üzerinden özelleştirebilirsiniz.</p>
               </div>
            </div>
         </div>
       )}
 
+      {/* Add Knowledge Modal */}
       {showAddSourceModal && (
         <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
            <div className="bg-white rounded-[4rem] w-full max-w-2xl p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
@@ -336,23 +369,14 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
               ) : (
                  <div className="mb-8">
                     <input type="url" placeholder="https://example.com" className="w-full bg-zinc-50 border border-zinc-100 rounded-full px-8 py-5 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all" value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} />
-                    <p className="mt-4 text-xs text-zinc-400 font-medium px-4">Web sitesindeki tüm metin içerikleri otomatik olarak temizlenip asistanınıza öğretilecektir.</p>
                  </div>
               )}
-              <div className="flex gap-4">
-                 <button onClick={handleAddSource} disabled={sourceLoading} className="flex-1 py-5 bg-[#198754] text-white rounded-[2rem] font-black text-xl hover:bg-[#157347] transition-all shadow-xl shadow-green-500/20 flex items-center justify-center gap-3 uppercase tracking-widest">
-                    {sourceLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />} Kaydet ve Eğit
-                 </button>
-                 <button onClick={() => setShowAddSourceModal(false)} className="px-10 py-5 bg-zinc-100 text-zinc-600 rounded-[2rem] font-black uppercase tracking-widest hover:bg-zinc-200 transition-all">İptal</button>
-              </div>
+              <button onClick={handleAddSource} disabled={sourceLoading} className="w-full py-5 bg-[#198754] text-white rounded-[2rem] font-black text-xl hover:bg-[#157347] transition-all shadow-xl shadow-green-500/20 flex items-center justify-center gap-3 uppercase tracking-widest">
+                 {sourceLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />} Kaydet ve Eğit
+              </button>
            </div>
         </div>
       )}
     </div>
   );
 }
-
-const s = {
-  userBubble: "bg-blue-600 text-white rounded-2xl rounded-br-none",
-  botBubble: "bg-zinc-100 text-zinc-800 rounded-2xl rounded-bl-none",
-};
