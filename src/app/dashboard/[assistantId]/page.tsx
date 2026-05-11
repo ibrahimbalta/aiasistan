@@ -1,13 +1,15 @@
 "use client";
 
-import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2 } from "lucide-react";
+import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2 } from "lucide-center";
 import React, { useState, useEffect, useRef } from "react";
 import { getAssistant } from "@/actions/assistant-actions";
 import { toast } from "react-hot-toast";
 
-export default function AssistantDetailPage({ params }: { params: { assistantId: string } }) {
+// Next.js 16/15 requires params to be handled as a promise in some cases or via React.use
+export default function AssistantDetailPage({ params: paramsPromise }: { params: Promise<{ assistantId: string }> }) {
   const [activeTab, setActiveTab] = useState("chat");
   const [assistant, setAssistant] = useState<any>(null);
+  const [assistantId, setAssistantId] = useState<string>("");
   const [messages, setMessages] = useState([
     { role: "assistant", content: "Merhaba! Ben senin özel asistanınım. Sana nasıl yardımcı olabilirim?" }
   ]);
@@ -16,10 +18,17 @@ export default function AssistantDetailPage({ params }: { params: { assistantId:
   const [fetching, setFetching] = useState(true);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Load assistant details
+  // Unwrapping params promise
   useEffect(() => {
+    paramsPromise.then(p => setAssistantId(p.assistantId));
+  }, [paramsPromise]);
+
+  // Load assistant details when assistantId is ready
+  useEffect(() => {
+    if (!assistantId) return;
+
     async function loadAssistant() {
-      const result = await getAssistant(params.assistantId);
+      const result = await getAssistant(assistantId);
       if (result.success) {
         setAssistant(result.assistant);
       } else {
@@ -28,7 +37,7 @@ export default function AssistantDetailPage({ params }: { params: { assistantId:
       setFetching(false);
     }
     loadAssistant();
-  }, [params.assistantId]);
+  }, [assistantId]);
 
   // Scroll to bottom
   useEffect(() => {
@@ -37,7 +46,7 @@ export default function AssistantDetailPage({ params }: { params: { assistantId:
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || loading) return;
+    if (!input.trim() || loading || !assistantId) return;
     
     const userMessage = input.trim();
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
@@ -49,7 +58,7 @@ export default function AssistantDetailPage({ params }: { params: { assistantId:
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          assistantId: params.assistantId,
+          assistantId: assistantId,
           question: userMessage,
           sessionId: "test-session"
         }),
@@ -60,7 +69,7 @@ export default function AssistantDetailPage({ params }: { params: { assistantId:
       if (data.answer) {
         setMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
       } else {
-        toast.error("Bir hata oluştu.");
+        toast.error(data.error || "Bir hata oluştu.");
       }
     } catch (error) {
       toast.error("Mesaj gönderilemedi.");
@@ -86,7 +95,7 @@ export default function AssistantDetailPage({ params }: { params: { assistantId:
           </div>
           <div>
             <h1 className="text-2xl font-bold">{assistant?.name || "Asistan"}</h1>
-            <p className="text-zinc-500 text-sm">ID: {params.assistantId}</p>
+            <p className="text-zinc-500 text-sm">ID: {assistantId}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
