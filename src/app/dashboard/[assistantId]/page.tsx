@@ -1,12 +1,12 @@
 "use client";
 
-import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2 } from "lucide-center";
+import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { getAssistant } from "@/actions/assistant-actions";
 import { toast } from "react-hot-toast";
 
-// Next.js 16/15 requires params to be handled as a promise in some cases or via React.use
-export default function AssistantDetailPage({ params: paramsPromise }: { params: Promise<{ assistantId: string }> }) {
+// Next.js 16/15 requires params to be handled as a promise
+export default function AssistantDetailPage({ params }: { params: Promise<{ assistantId: string }> }) {
   const [activeTab, setActiveTab] = useState("chat");
   const [assistant, setAssistant] = useState<any>(null);
   const [assistantId, setAssistantId] = useState<string>("");
@@ -20,8 +20,8 @@ export default function AssistantDetailPage({ params: paramsPromise }: { params:
 
   // Unwrapping params promise
   useEffect(() => {
-    paramsPromise.then(p => setAssistantId(p.assistantId));
-  }, [paramsPromise]);
+    params.then(p => setAssistantId(p.assistantId));
+  }, [params]);
 
   // Load assistant details when assistantId is ready
   useEffect(() => {
@@ -110,7 +110,6 @@ export default function AssistantDetailPage({ params: paramsPromise }: { params:
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="flex items-center gap-1 border-b border-white/5">
         {[
           { id: "chat", label: "Test Chat", icon: <MessageSquare className="w-4 h-4" /> },
@@ -133,7 +132,6 @@ export default function AssistantDetailPage({ params: paramsPromise }: { params:
         ))}
       </div>
 
-      {/* Tab Content */}
       <div className="flex-1 min-h-0">
         {activeTab === "chat" && (
           <div className="h-full flex flex-col glass-morphism rounded-2xl border border-white/5 overflow-hidden">
