@@ -28,6 +28,8 @@ model Assistant {
   theme       String   @default("default")
   knowledge   KnowledgeBase[]
   chats       Chat[]
+  telegramToken String?
+  telegramEnabled Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

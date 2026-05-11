@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { getAssistant, updateAssistant } from "@/actions/assistant-actions";
 import { deleteKnowledge, addKnowledge } from "@/actions/knowledge-actions";
 import { scrapeUrl } from "@/actions/web-actions";
+import { updateTelegramSettings } from "@/actions/telegram-actions";
 import { toast } from "react-hot-toast";
 
 const THEMES = [
@@ -42,7 +43,9 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
     name: "",
     personality: "",
     description: "",
-    theme: "default"
+    theme: "default",
+    telegramToken: "",
+    telegramEnabled: false
   });
 
   const [sourceType, setSourceType] = useState<"TEXT" | "LINK">("TEXT");
@@ -72,7 +75,9 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
           name: result.assistant.name || "",
           personality: result.assistant.personality || "",
           description: result.assistant.description || "",
-          theme: result.assistant.theme || "default"
+          theme: result.assistant.theme || "default",
+          telegramToken: result.assistant.telegramToken || "",
+          telegramEnabled: result.assistant.telegramEnabled || false
         });
       }
     } catch (err) {
@@ -179,6 +184,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
           { id: "chat", label: "Test Chat", icon: <MessageSquare className="w-4 h-4" /> },
           { id: "knowledge", label: "Bilgi Kaynakları", icon: <FileText className="w-4 h-4" /> },
           { id: "settings", label: "Yapılandırma & Temalar", icon: <Palette className="w-4 h-4" /> },
+          { id: "telegram", label: "Telegram Entegrasyonu", icon: <Send className="w-4 h-4" /> },
         ].map(tab => (
           <button 
             key={tab.id} 
@@ -287,6 +293,78 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                     </div>
                   ))}
                 </div>
+             </div>
+          </div>
+        )}
+
+        {activeTab === "telegram" && (
+          <div className="max-w-4xl space-y-8 animate-in slide-in-from-bottom-2">
+             <div className="bg-white p-10 rounded-[3rem] border border-zinc-100 shadow-sm overflow-hidden">
+                <div className="flex items-center justify-between mb-10">
+                   <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600"><Send className="w-7 h-7" /></div>
+                      <div>
+                        <h3 className="text-2xl font-black text-zinc-900 uppercase italic">Telegram Bot Bağlantısı</h3>
+                        <p className="text-zinc-400 text-sm font-bold uppercase tracking-widest mt-1">Asistanınızı Telegram'a Taşıyın</p>
+                      </div>
+                   </div>
+                   <div className="flex items-center gap-3 bg-zinc-50 p-2 rounded-2xl border border-zinc-100">
+                      <span className={`text-[10px] font-black uppercase tracking-widest px-3 ${editData.telegramEnabled ? "text-green-600" : "text-zinc-400"}`}>
+                        {editData.telegramEnabled ? "Aktif" : "Devre Dışı"}
+                      </span>
+                      <button 
+                        onClick={() => setEditData({...editData, telegramEnabled: !editData.telegramEnabled})}
+                        className={`w-14 h-7 rounded-full relative transition-all duration-300 ${editData.telegramEnabled ? "bg-green-500 shadow-lg shadow-green-500/30" : "bg-zinc-200"}`}
+                      >
+                        <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all duration-300 ${editData.telegramEnabled ? "left-8" : "left-1"}`} />
+                      </button>
+                   </div>
+                </div>
+
+                <div className="space-y-8">
+                   <div className="p-8 bg-blue-50/50 rounded-[2.5rem] border border-blue-100 flex gap-6">
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-sm"><Sparkles className="w-6 h-6 text-blue-600" /></div>
+                      <div className="space-y-2">
+                        <p className="text-sm text-blue-900 font-bold uppercase tracking-tight">Nasıl Kurulur?</p>
+                        <p className="text-xs text-blue-800 leading-relaxed font-medium">Telegram'da <a href="https://t.me/botfather" target="_blank" className="font-black underline">@BotFather</a> hesabına gidin, bir bot oluşturun ve size verilen <b>HTTP API Token</b>'ı aşağıya yapıştırın.</p>
+                      </div>
+                   </div>
+
+                   <div className="space-y-4">
+                      <label className="block text-xs font-black text-zinc-400 uppercase tracking-[0.2em] ml-2">Telegram Bot Token (HTTP API)</label>
+                      <input 
+                        type="text" 
+                        placeholder="Örn: 123456789:ABCDefGhIJKlmNoPQRstuVWxYz"
+                        className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-8 py-5 text-zinc-900 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" 
+                        value={editData.telegramToken} 
+                        onChange={(e) => setEditData({...editData, telegramToken: e.target.value})} 
+                      />
+                   </div>
+
+                   <button 
+                    onClick={async () => {
+                      setUpdating(true);
+                      try {
+                        const res = await updateTelegramSettings(assistantId, editData.telegramToken, editData.telegramEnabled);
+                        if (res.success) {
+                          toast.success("Telegram ayarları başarıyla güncellendi!");
+                          loadAssistant();
+                        } else {
+                          toast.error(res.error || "Bir hata oluştu.");
+                        }
+                      } finally { setUpdating(false); }
+                    }}
+                    disabled={updating}
+                    className="w-full bg-zinc-900 text-white py-5 rounded-[2rem] font-black text-lg flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl shadow-zinc-900/20 uppercase tracking-widest"
+                   >
+                     {updating ? <Loader2 className="w-6 h-6 animate-spin" /> : <Check className="w-6 h-6" />} Ayarları Uygula & Bağla
+                   </button>
+                </div>
+             </div>
+
+             <div className="p-8 border-2 border-dashed border-zinc-100 rounded-[3rem] text-center bg-zinc-50/30">
+                <p className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.3em]">Güvenli & İzole Altyapı</p>
+                <p className="text-xs text-zinc-400 mt-2 font-medium">Tüm Telegram trafiği uçtan uca şifreli olarak yönetilir ve asistanınızın hafızasıyla senkronize çalışır.</p>
              </div>
           </div>
         )}
