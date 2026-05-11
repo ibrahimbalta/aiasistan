@@ -15,7 +15,7 @@ import {
   ChevronRight,
   User
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/utils/supabase/client";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
