@@ -1,23 +1,22 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { createClient } from "@/utils/supabase/server";
 import { prisma } from "./prisma";
 
 export async function syncUser() {
-  const { userId } = auth();
-  if (!userId) return null;
-
-  const clerkUser = await currentUser();
-  if (!clerkUser) return null;
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  
+  if (!authUser) return null;
 
   const user = await prisma.user.upsert({
-    where: { clerkId: userId },
+    where: { supabaseId: authUser.id },
     update: {
-      email: clerkUser.emailAddresses[0].emailAddress,
-      name: `${clerkUser.firstName} ${clerkUser.lastName}`,
+      email: authUser.email!,
+      name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0],
     },
     create: {
-      clerkId: userId,
-      email: clerkUser.emailAddresses[0].emailAddress,
-      name: `${clerkUser.firstName} ${clerkUser.lastName}`,
+      supabaseId: authUser.id,
+      email: authUser.email!,
+      name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0],
     },
   });
 
@@ -25,10 +24,12 @@ export async function syncUser() {
 }
 
 export async function getDbUser() {
-  const { userId } = auth();
-  if (!userId) return null;
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  
+  if (!authUser) return null;
 
   return await prisma.user.findUnique({
-    where: { clerkId: userId },
+    where: { supabaseId: authUser.id },
   });
 }

@@ -140,5 +140,3 @@ export default function AssistantDetailPage({ params }: { params: { assistantId:
     </div>
   );
 }
-
-import { PlusCircle } from "lucide-react";
