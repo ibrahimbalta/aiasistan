@@ -1,225 +1,237 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Bot, Zap, Shield, Globe, MessageSquare, CheckCircle2, ChevronRight, PlayCircle, Star, Sparkles, Layout, Smartphone, Building2, ShoppingBag, HeartPulse, GraduationCap, Gavel, User } from "lucide-react";
+import { 
+  Bot, 
+  Zap, 
+  Globe, 
+  MessageSquare, 
+  Shield, 
+  BarChart, 
+  ChevronRight, 
+  Star,
+  CheckCircle2,
+  ArrowRight,
+  Sparkles,
+  Play,
+  Layers,
+  Rocket
+} from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function LandingPage() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-white text-zinc-900 font-sans selection:bg-pink-100 selection:text-pink-900">
-      
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-[100] bg-white/80 backdrop-blur-md border-b border-zinc-100">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-tr from-[#6B2D5C] to-[#D63384] rounded-xl flex items-center justify-center shadow-lg shadow-pink-500/20">
+    <div className="min-h-screen bg-[#FDFCFD] text-zinc-900 selection:bg-pink-100 selection:text-[#D63384]">
+      {/* Navbar */}
+      <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 ${scrolled ? "bg-white/80 backdrop-blur-xl border-b border-zinc-100 py-4" : "bg-transparent py-8"}`}>
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <div className="flex items-center gap-3 group cursor-pointer">
+            <div className="w-10 h-10 bg-[#6B2D5C] rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/20 group-hover:rotate-6 transition-transform">
               <Bot className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-black tracking-tight text-[#6B2D5C]">AI ASİSTAN</span>
+            <span className="text-xl font-black uppercase tracking-tighter italic text-[#6B2D5C]">AI ASİSTAN</span>
           </div>
-          
-          <div className="hidden md:flex items-center gap-8 text-sm font-bold text-zinc-500">
-            <a href="#sektorler" className="hover:text-[#D63384] transition-colors">Sektörler</a>
-            <a href="#ozellikler" className="hover:text-[#D63384] transition-colors">Özellikler</a>
-            <a href="#nasil-calisir" className="hover:text-[#D63384] transition-colors">Nasıl Çalışır?</a>
+
+          <div className="hidden md:flex items-center gap-10">
+            {["Sektörler", "Özellikler", "Nasıl Çalışır?", "Fiyatlandırma"].map((item) => (
+              <Link key={item} href="#" className="text-sm font-black uppercase tracking-widest text-zinc-400 hover:text-[#D63384] transition-colors">{item}</Link>
+            ))}
           </div>
 
           <div className="flex items-center gap-4">
-            <Link href="/sign-in" className="text-sm font-bold text-zinc-600">Giriş</Link>
-            <Link 
-              href="/sign-up" 
-              className="bg-[#6B2D5C] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[#522246] transition-all shadow-xl shadow-purple-900/20"
-            >
-              Ücretsiz Başla
-            </Link>
+            <Link href="/login" className="text-sm font-black uppercase tracking-widest text-[#6B2D5C] px-6 py-3 hover:bg-zinc-50 rounded-2xl transition-all">Giriş</Link>
+            <Link href="/register" className="bg-[#6B2D5C] text-white px-8 py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-purple-900/20 hover:bg-[#522246] transition-all hover:scale-105 active:scale-95">Ücretsiz Başla</Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-24 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10">
-          <div className="absolute top-[-5%] left-[-5%] w-[45%] h-[45%] bg-pink-100/40 rounded-full blur-[120px]" />
-          <div className="absolute top-[10%] right-[-5%] w-[35%] h-[35%] bg-yellow-100/40 rounded-full blur-[120px]" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-20">
-            {/* Left Content */}
-            <div className="flex-1 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-100 text-yellow-800 text-xs font-black mb-8 border border-yellow-200">
-                <Sparkles className="w-3 h-3" />
-                <span>YAPAY ZEKA DEVRİMİ BAŞLADI</span>
-              </div>
-              
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-zinc-900 mb-8 leading-[1.1]">
-                İşletmeni AI ile <br />
-                <span className="bg-gradient-to-r from-[#6B2D5C] via-[#D63384] to-[#FFC107] bg-clip-text text-transparent italic">
-                  Yeniden İnşa Et
-                </span>
-              </h1>
-              
-              <p className="max-w-2xl text-lg text-zinc-500 mb-12 font-medium leading-relaxed mx-auto lg:mx-0">
-                Verilerini saniyeler içinde AI asistanına dönüştür. Müşterilerine 7/24, 
-                uzman bir danışman gibi cevap veren bir asistan oluşturmak hiç bu kadar kolay olmamıştı.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <Link 
-                  href="/dashboard" 
-                  className="w-full sm:w-auto px-10 py-5 bg-[#D63384] text-white rounded-2xl font-black text-xl hover:bg-[#c22e77] transition-all shadow-2xl shadow-pink-500/30 flex items-center justify-center gap-2 group"
-                >
-                  Hemen Oluştur 
-                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <button className="w-full sm:w-auto px-10 py-5 bg-white text-zinc-900 border-2 border-zinc-100 rounded-2xl font-black text-xl hover:bg-zinc-50 transition-all flex items-center justify-center gap-2 group">
-                  <PlayCircle className="w-6 h-6 text-[#198754] group-hover:scale-110 transition-transform" />
-                  Demoyu İzle
-                </button>
-              </div>
-            </div>
-
-            {/* Right Side: Mobile Mockup */}
-            <div className="flex-1 relative">
-               <div className="absolute -inset-4 bg-gradient-to-r from-[#6B2D5C] to-[#198754] rounded-[4rem] blur-2xl opacity-20 animate-pulse" />
-               <div className="relative w-[320px] h-[640px] mx-auto bg-black rounded-[3.5rem] border-[12px] border-zinc-900 shadow-2xl overflow-hidden">
-                  {/* Notch */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-8 bg-zinc-900 rounded-b-3xl z-50" />
-                  
-                  {/* Chat Interface Inside Phone */}
-                  <div className="h-full bg-zinc-50 flex flex-col pt-12">
-                     <div className="p-6 border-b bg-white flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#D63384] rounded-full flex items-center justify-center"><Bot className="w-6 h-6 text-white" /></div>
-                        <div><div className="font-bold text-sm">AI Asistan</div><div className="text-[10px] text-green-500 font-bold">● ÇEVRİMİÇİ</div></div>
-                     </div>
-                     <div className="flex-1 p-4 space-y-4">
-                        <div className="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-xs border border-zinc-100">Merhaba! Bugün size nasıl yardımcı olabilirim?</div>
-                        <div className="bg-[#D63384] p-3 rounded-2xl rounded-br-none shadow-sm text-xs text-white ml-auto max-w-[80%]">Emlak projeleriniz hakkında bilgi almak istiyorum.</div>
-                        <div className="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-xs border border-zinc-100 animate-pulse">Analiz ediyorum...</div>
-                     </div>
-                     <div className="p-4 bg-white border-t flex gap-2">
-                        <div className="flex-1 bg-zinc-100 rounded-full h-10 px-4" />
-                        <div className="w-10 h-10 bg-[#D63384] rounded-full flex items-center justify-center text-white"><ArrowRight className="w-4 h-4" /></div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sektörler Bölümü */}
-      <section id="sektorler" className="py-32 bg-zinc-50/50">
+      <section className="relative pt-48 pb-32 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] h-[1000px] bg-gradient-to-b from-purple-50/50 to-transparent rounded-[100%] blur-3xl -z-10" />
+        
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-[#6B2D5C] tracking-tighter mb-16 uppercase">Her Sektör İçin Kusursuz Çözüm</h2>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {[
-              { label: "Gayrimenkul", icon: <Building2 className="w-8 h-8" />, color: "bg-blue-100 text-blue-600" },
-              { label: "E-Ticaret", icon: <ShoppingBag className="w-8 h-8" />, color: "bg-pink-100 text-pink-600" },
-              { label: "Sağlık", icon: <HeartPulse className="w-8 h-8" />, color: "bg-green-100 text-green-600" },
-              { label: "Eğitim", icon: <GraduationCap className="w-8 h-8" />, color: "bg-yellow-100 text-yellow-600" },
-              { label: "Hukuk", icon: <Gavel className="w-8 h-8" />, color: "bg-zinc-100 text-zinc-600" },
-              { label: "Destek", icon: <MessageSquare className="w-8 h-8" />, color: "bg-purple-100 text-purple-600" },
-            ].map((s, i) => (
-              <div key={i} className="group p-8 rounded-3xl bg-white border border-zinc-100 hover:shadow-2xl transition-all hover:-translate-y-2 cursor-pointer">
-                <div className={`w-16 h-16 ${s.color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
-                  {s.icon}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-6 py-2 bg-yellow-400/10 border border-yellow-400/20 rounded-full mb-8">
+            <Sparkles className="w-4 h-4 text-yellow-600" />
+            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-yellow-700">Yapay Zeka Devrimi Başladı</span>
+          </motion.div>
+
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8">
+            İşletmeni AI ile<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6B2D5C] via-[#D63384] to-orange-400 italic pr-4">Yeniden İnşa Et</span>
+          </motion.h1>
+
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="max-w-2xl mx-auto text-xl text-zinc-500 font-medium leading-relaxed mb-12">
+            Müşterilerinize 7/24 kesintisiz hizmet veren, verilerinizle eğitilmiş özel yapay zeka asistanınızı 2 dakikada yayına alın.
+          </motion.p>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/register" className="w-full sm:w-auto bg-[#D63384] text-white px-10 py-5 rounded-[2rem] text-lg font-black uppercase tracking-widest shadow-2xl shadow-pink-500/30 hover:bg-[#c22e77] transition-all hover:scale-105">Hemen Başlayın</Link>
+            <button className="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-5 bg-white border border-zinc-100 rounded-[2rem] text-lg font-black uppercase tracking-widest hover:bg-zinc-50 transition-all">
+              <div className="w-8 h-8 bg-zinc-100 rounded-full flex items-center justify-center"><Play className="w-4 h-4 fill-zinc-900" /></div> Demo İzle
+            </button>
+          </motion.div>
+        </div>
+
+        {/* Realistic Mockup Area */}
+        <div className="max-w-6xl mx-auto mt-24 px-6 relative">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#FDFCFD] via-transparent to-transparent z-10 h-32 bottom-0" />
+          <motion.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 1 }} className="relative bg-white rounded-t-[4rem] border-x border-t border-zinc-100 shadow-[0_-20px_80px_rgba(0,0,0,0.05)] overflow-hidden">
+             <div className="h-16 bg-zinc-50/50 border-b border-zinc-100 flex items-center px-8 gap-2">
+                <div className="flex gap-1.5">
+                   <div className="w-3 h-3 rounded-full bg-zinc-200" />
+                   <div className="w-3 h-3 rounded-full bg-zinc-200" />
+                   <div className="w-3 h-3 rounded-full bg-zinc-200" />
                 </div>
-                <span className="font-bold text-sm text-[#6B2D5C]">{s.label}</span>
-              </div>
-            ))}
+             </div>
+             <div className="aspect-video bg-zinc-50 relative flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                   <div className="w-[500px] h-[500px] bg-[#D63384] rounded-full blur-[120px]" />
+                </div>
+                {/* Simulated Chat Widget */}
+                <div className="w-full max-w-md bg-white rounded-[3rem] shadow-2xl p-8 border border-zinc-100 animate-in zoom-in duration-1000">
+                   <div className="flex items-center gap-4 mb-8 pb-6 border-b border-zinc-50">
+                      <div className="w-12 h-12 bg-[#6B2D5C] rounded-2xl flex items-center justify-center"><Bot className="w-6 h-6 text-white" /></div>
+                      <div>
+                         <div className="font-black uppercase italic tracking-tighter">AI ASİSTAN</div>
+                         <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" /><span className="text-[10px] font-black uppercase text-zinc-400">Çevrimiçi</span></div>
+                      </div>
+                   </div>
+                   <div className="space-y-4 mb-8">
+                      <div className="bg-zinc-50 p-4 rounded-[1.5rem] rounded-tl-none text-sm font-medium text-zinc-600">Merhaba! Size nasıl yardımcı olabilirim?</div>
+                      <div className="bg-[#D63384] p-4 rounded-[1.5rem] rounded-br-none text-sm font-medium text-white ml-auto w-fit">Emlak projeleriniz hakkında bilgi alabilir miyim?</div>
+                      <div className="bg-zinc-50 p-4 rounded-[1.5rem] rounded-tl-none text-sm font-medium text-zinc-600 flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Yazıyor...</div>
+                   </div>
+                   <div className="h-12 bg-zinc-50 rounded-2xl border border-zinc-100" />
+                </div>
+             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Trust Badges */}
+      <section className="py-20 border-y border-zinc-100">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <p className="text-[11px] font-black uppercase tracking-[0.4em] text-zinc-400 mb-10 italic">2500+ İşletme Tarafından Tercih Ediliyor</p>
+          <div className="flex flex-wrap justify-center items-center gap-12 opacity-40 grayscale group hover:grayscale-0 transition-all">
+             <span className="text-3xl font-black italic tracking-tighter">TECHSTAR</span>
+             <span className="text-3xl font-black italic tracking-tighter">GLOBEX</span>
+             <span className="text-3xl font-black italic tracking-tighter">QUANTUM</span>
+             <span className="text-3xl font-black italic tracking-tighter">NEXUS</span>
+             <span className="text-3xl font-black italic tracking-tighter">VANTAGE</span>
           </div>
         </div>
       </section>
 
-      {/* Örnek Kullanıcılar / Senaryolar */}
-      <section className="py-32 bg-white">
+      {/* Better CTA Section (Redesigned) */}
+      <section className="py-32 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
-            <div className="text-left">
-               <h2 className="text-4xl font-black text-[#6B2D5C] tracking-tighter uppercase mb-4 italic">Neler Yapabilirsin?</h2>
-               <p className="text-zinc-500 font-medium">Asistanını farklı rollerde kullanabilirsin.</p>
-            </div>
-            <div className="flex gap-2">
-               <div className="w-12 h-1 bg-[#D63384] rounded-full" />
-               <div className="w-4 h-1 bg-zinc-200 rounded-full" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { 
-                name: "Gayrimenkul Uzmanı", 
-                role: "Ahmet Yılmaz", 
-                desc: "Projeleri ezberler, müşterilere daire seçeneklerini ve fiyatları 7/24 sunar.",
-                tags: ["Katalog Uzmanı", "Randevu"]
-              },
-              { 
-                name: "E-Ticaret Destek", 
-                role: "ModaTrend Bot", 
-                desc: "İade politikası, kargo takibi ve beden seçimi konularında uzmanlaşmıştır.",
-                tags: ["Müşteri Memnuniyeti", "Satış"]
-              },
-              { 
-                name: "Özel Ders Asistanı", 
-                role: "Akademi AI", 
-                desc: "Öğrencilerin sorularını yanıtlar, ders programlarını yönetir ve kaynak önerir.",
-                tags: ["Eğitim", "Analiz"]
-              }
-            ].map((user, i) => (
-              <div key={i} className="p-10 rounded-[3rem] bg-zinc-50 border border-zinc-100 hover:bg-[#6B2D5C] group transition-all duration-500">
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:rotate-12 transition-transform">
-                  <User className="w-8 h-8 text-[#D63384]" />
+          <div className="relative bg-gradient-to-br from-[#6B2D5C] via-[#853974] to-[#D63384] rounded-[4rem] p-12 md:p-24 overflow-hidden shadow-[0_50px_100px_-20px_rgba(107,45,92,0.4)]">
+             <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+             <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-white/10 rounded-full blur-[120px]" />
+             <div className="absolute bottom-[-20%] left-[-10%] w-[300px] h-[300px] bg-pink-400/20 rounded-full blur-[80px]" />
+             
+             <div className="relative z-10 flex flex-col md:flex-row items-center gap-16">
+                <div className="flex-1 text-center md:text-left">
+                   <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full mb-6 border border-white/20">
+                      <Rocket className="w-4 h-4 text-pink-300" />
+                      <span className="text-[10px] font-black text-white uppercase tracking-widest">Hızla Başlayın</span>
+                   </div>
+                   <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-tight mb-8">
+                      Kendi AI Asistanını <br className="hidden md:block" />
+                      <span className="italic text-pink-300">Bugün Yayına Al</span>
+                   </h2>
+                   <p className="text-white/70 text-lg font-medium mb-10 max-w-xl">
+                      Kod yazmanıza gerek yok. Verilerinizi yükleyin, asistanınızı özelleştirin ve hemen müşterilerinizle buluşturun.
+                   </p>
+                   <div className="flex flex-col sm:flex-row items-center gap-4">
+                      <Link href="/register" className="w-full sm:w-auto bg-white text-[#6B2D5C] px-10 py-5 rounded-[2rem] text-lg font-black uppercase tracking-widest hover:bg-zinc-100 transition-all hover:scale-105 active:scale-95 shadow-2xl">Ücretsiz Başla</Link>
+                      <Link href="/contact" className="w-full sm:w-auto flex items-center justify-center gap-2 px-10 py-5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-[2rem] text-lg font-black uppercase tracking-widest hover:bg-white/20 transition-all">Satış Ekibiyle Görüş</Link>
+                   </div>
                 </div>
-                <h4 className="text-xl font-black mb-1 group-hover:text-white transition-colors">{user.name}</h4>
-                <p className="text-xs font-bold text-[#D63384] mb-4 group-hover:text-pink-300 transition-colors uppercase tracking-widest">{user.role}</p>
-                <p className="text-zinc-500 text-sm leading-relaxed mb-8 group-hover:text-zinc-300 transition-colors">{user.desc}</p>
-                <div className="flex flex-wrap gap-2">
-                   {user.tags.map((t, idx) => (
-                     <span key={idx} className="px-3 py-1 rounded-full bg-white text-[10px] font-black uppercase text-[#6B2D5C]">{t}</span>
-                   ))}
+                
+                <div className="flex-1 relative hidden lg:block">
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-4 translate-y-8">
+                         <div className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 transform hover:-translate-y-2 transition-transform">
+                            <Zap className="w-8 h-8 text-yellow-400 mb-4" />
+                            <div className="font-black text-white text-sm uppercase">Işık Hızı</div>
+                         </div>
+                         <div className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 transform hover:-translate-y-2 transition-transform">
+                            <Shield className="w-8 h-8 text-cyan-400 mb-4" />
+                            <div className="font-black text-white text-sm uppercase">Tam Güvenlik</div>
+                         </div>
+                      </div>
+                      <div className="space-y-4">
+                         <div className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 transform hover:-translate-y-2 transition-transform">
+                            <Layers className="w-8 h-8 text-pink-400 mb-4" />
+                            <div className="font-black text-white text-sm uppercase">Kolay Entegrasyon</div>
+                         </div>
+                         <div className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 transform hover:-translate-y-2 transition-transform">
+                            <Globe className="w-8 h-8 text-green-400 mb-4" />
+                            <div className="font-black text-white text-sm uppercase">Global Erişim</div>
+                         </div>
+                      </div>
+                   </div>
                 </div>
-              </div>
-            ))}
+             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-[#0a0a0a]">
+      {/* Footer */}
+      <footer className="bg-white py-20 border-t border-zinc-100">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-gradient-to-br from-[#6B2D5C] to-[#198754] rounded-[4rem] p-12 md:p-24 text-center text-white relative overflow-hidden">
-            <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-yellow-400 opacity-20 blur-[150px]" />
-            <h2 className="text-5xl md:text-7xl font-black mb-12 leading-tight relative z-10">
-              Kendi AI Asistanını <br /> Bugün Yayına Al
-            </h2>
-            <Link 
-              href="/sign-up" 
-              className="inline-flex items-center gap-4 px-12 py-6 bg-white text-[#6B2D5C] rounded-full font-black text-2xl hover:scale-105 transition-all shadow-2xl relative z-10"
-            >
-              Hemen Başla
-              <ChevronRight className="w-8 h-8" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Modern Footer */}
-      <footer className="py-16 bg-white border-t border-zinc-100">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-12">
-           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#6B2D5C] rounded-xl flex items-center justify-center">
-              <Bot className="w-6 h-6 text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 bg-[#6B2D5C] rounded-xl flex items-center justify-center shadow-lg"><Bot className="w-6 h-6 text-white" /></div>
+                <span className="text-xl font-black uppercase tracking-tighter italic text-[#6B2D5C]">AI ASİSTAN</span>
+              </div>
+              <p className="max-w-sm text-zinc-500 font-medium leading-relaxed mb-8">
+                İşletmenizi yapay zeka ile dönüştürün. Müşteri deneyimini yeniden tanımlayın ve verimliliği artırın.
+              </p>
             </div>
-            <span className="text-2xl font-black tracking-tighter text-[#6B2D5C] uppercase">AI ASİSTAN</span>
+            <div>
+              <h4 className="font-black uppercase tracking-widest text-sm mb-8 italic">Platform</h4>
+              <ul className="space-y-4 text-sm font-bold text-zinc-400">
+                <li><Link href="#" className="hover:text-[#D63384] transition-colors">Özellikler</Link></li>
+                <li><Link href="#" className="hover:text-[#D63384] transition-colors">Sektörler</Link></li>
+                <li><Link href="#" className="hover:text-[#D63384] transition-colors">Fiyatlandırma</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-black uppercase tracking-widest text-sm mb-8 italic">Şirket</h4>
+              <ul className="space-y-4 text-sm font-bold text-zinc-400">
+                <li><Link href="#" className="hover:text-[#D63384] transition-colors">Hakkımızda</Link></li>
+                <li><Link href="#" className="hover:text-[#D63384] transition-colors">İletişim</Link></li>
+                <li><Link href="#" className="hover:text-[#D63384] transition-colors">Destek</Link></li>
+              </ul>
+            </div>
           </div>
-          <p className="text-zinc-400 font-bold text-sm italic">Saniyeler içinde, kendi verilerinle...</p>
-          <div className="flex items-center gap-8 text-sm font-black text-[#D63384]">
-             <a href="#" className="hover:text-[#198754] transition-colors">YOUTUBE</a>
-             <a href="#" className="hover:text-[#198754] transition-colors">LINKEDIN</a>
-             <a href="#" className="hover:text-[#198754] transition-colors">TWITTER</a>
+          <div className="pt-8 border-t border-zinc-50 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">© 2026 AI ASİSTAN. Tüm Hakları Saklıdır.</p>
+            <div className="flex gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-300">
+              <Link href="#" className="hover:text-zinc-600">Gizlilik Politikası</Link>
+              <Link href="#" className="hover:text-zinc-600">Kullanım Şartları</Link>
+            </div>
           </div>
         </div>
       </footer>
     </div>
+  );
+}
+
+function Loader2(props: any) {
+  return (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
   );
 }
