@@ -103,7 +103,7 @@ export default function LandingPage() {
               <img 
                 src="/images/mascot.png" 
                 alt="AI Chatbot Mascot" 
-                className="w-40 h-40 md:w-56 md:h-56 mx-auto drop-shadow-[0_20px_50px_rgba(214,51,132,0.3)]"
+                className="w-40 h-40 md:w-56 md:h-56 mx-auto drop-shadow-[0_20px_50px_rgba(214,51,132,0.2)] mix-blend-multiply"
               />
             </motion.div>
             {/* Mascot Shadow Effect */}
