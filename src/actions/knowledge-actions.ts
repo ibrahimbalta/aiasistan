@@ -1,47 +1,68 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { generateEmbedding } from "@/lib/embeddings";
-import { chunkText } from "@/lib/utils-rag";
+import { syncUser } from "@/lib/auth-utils";
 import { revalidatePath } from "next/cache";
 
-export async function addKnowledge(assistantId: string, type: "TXT" | "PDF" | "LINK", content: string, fileName?: string) {
+export async function addKnowledge(assistantId: string, type: "TXT" | "LINK", content: string, fileName: string) {
   try {
-    // 1. Metni parçalara böl (Chunking)
-    const chunks = chunkText(content);
+    const user = await syncUser();
+    if (!user) throw new Error("Unauthorized");
 
-    // 2. Her parça için embedding oluştur ve kaydet
-    // Not: MVP'de şimdilik ilk 1-2 parçayı veya tümünü kaydedebiliriz.
-    for (const chunk of chunks) {
-      const embedding = await generateEmbedding(chunk);
-      
-      await prisma.knowledgeBase.create({
-        data: {
-          assistantId,
-          type,
-          content: chunk,
-          fileName: fileName || "isimsiz-kaynak",
-          // Not: Prisma Unsupported field için raw query gerekebilir
-          // Şimdilik sadece içeriği kaydediyoruz, vektör araması için pgvector query'si eklenecek.
-        },
-      });
-    }
+    const knowledge = await prisma.knowledgeBase.create({
+      data: {
+        assistantId,
+        type,
+        content,
+        fileName,
+      }
+    });
 
     revalidatePath(`/dashboard/${assistantId}`);
-    return { success: true };
+    return { success: true, knowledge };
   } catch (error: any) {
-    console.error("Bilgi ekleme hatası:", error);
     return { success: false, error: error.message };
   }
 }
 
-export async function deleteKnowledge(id: string, assistantId: string) {
+export async function deleteKnowledge(id: string, assistantId?: string) {
   try {
+    const user = await syncUser();
+    if (!user) throw new Error("Unauthorized");
+
     await prisma.knowledgeBase.delete({
-      where: { id },
+      where: { id }
     });
-    revalidatePath(`/dashboard/${assistantId}`);
+
+    if (assistantId) {
+      revalidatePath(`/dashboard/${assistantId}`);
+    }
+    revalidatePath("/dashboard/knowledge");
+    
     return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getKnowledgeBase() {
+  try {
+    const user = await syncUser();
+    if (!user) throw new Error("Unauthorized");
+
+    const knowledge = await prisma.knowledgeBase.findMany({
+      where: {
+        assistant: { userId: user.id }
+      },
+      include: {
+        assistant: {
+          select: { name: true }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+
+    return { success: true, knowledge };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
