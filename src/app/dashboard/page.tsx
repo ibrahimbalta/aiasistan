@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Plus, MessageSquare, Users, Zap, ArrowRight, Bot, TrendingUp } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { syncUser } from "@/lib/auth-utils";
+import DeleteAssistantButton from "@/components/DeleteAssistantButton";
 
 export default async function DashboardPage() {
   const user = await syncUser();
@@ -65,12 +66,14 @@ export default async function DashboardPage() {
         {assistants.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {assistants.map((assistant) => (
-              <Link 
-                key={assistant.id}
-                href={`/dashboard/${assistant.id}`}
-                className="group p-8 rounded-[3rem] bg-white border border-zinc-100 hover:border-pink-200 transition-all hover:shadow-2xl hover:shadow-pink-500/5 relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-pink-50 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative group">
+                <DeleteAssistantButton id={assistant.id} name={assistant.name} />
+                <Link 
+                  key={assistant.id}
+                  href={`/dashboard/${assistant.id}`}
+                  className="group p-8 rounded-[3rem] bg-white border border-zinc-100 hover:border-pink-200 transition-all hover:shadow-2xl hover:shadow-pink-500/5 relative overflow-hidden block"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-pink-50 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity" />
                 
                 <div className="flex items-center justify-between mb-8 relative z-10">
                   <div className="w-14 h-14 bg-[#6B2D5C] rounded-2xl flex items-center justify-center font-black text-2xl text-white shadow-xl shadow-purple-900/20 group-hover:rotate-6 transition-transform">
