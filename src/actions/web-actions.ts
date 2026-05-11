@@ -1,26 +1,59 @@
 "use server";
 
+import * as cheerio from 'cheerio';
+
 export async function scrapeUrl(url: string) {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      },
+      next: { revalidate: 3600 } // Önbelleğe alma
+    });
+
+    if (!response.ok) throw new Error("Sayfaya erişilemedi.");
+    
     const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // Gereksiz etiketleri temizle
+    $('script, style, noscript, iframe, footer, header, nav, aside, form, button, .ads, .sidebar, .menu').remove();
+
+    // Sayfa başlığını al
+    const title = $('title').text().trim();
     
-    // Basit bir regex ile body içindeki metni çekiyoruz
-    // Profesyonel bir uygulama için 'cheerio' veya 'puppeteer' gerekebilir 
-    // ama MVP için temizlenmiş metin yeterli olacaktır.
-    const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-    let text = bodyMatch ? bodyMatch[1] : html;
+    // Ana içeriği hedefle (main veya article varsa onları önceliklendir)
+    let contentElement = $('main, article, .content, .main-content');
     
-    // Script, stil ve HTML etiketlerini temizle
-    text = text
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
+    // Eğer özel bir içerik alanı bulunamadıysa body üzerinden devam et
+    if (contentElement.length === 0) {
+      contentElement = $('body');
+    }
+
+    // Metni temizle ve düzenle
+    let text = contentElement.text()
+      .replace(/\s+/g, ' ') // Fazla boşlukları temizle
+      .replace(/\n+/g, '\n') // Fazla satır başlarını temizle
       .trim();
 
-    return { success: true, content: text.substring(0, 5000) }; // İlk 5000 karakteri alalım
+    // Eğer metin çok kısaysa (belki JS ile yükleniyordur), tüm body'den dene
+    if (text.length < 200) {
+      text = $('body').text().replace(/\s+/g, ' ').trim();
+    }
+
+    // Maksimum 10.000 karakter alalım (Yapay zekanın en verimli çalıştığı aralık)
+    const finalContent = `SAYFA BAŞLIĞI: ${title}\n\nİÇERİK:\n${text.substring(0, 10000)}`;
+
+    return { 
+      success: true, 
+      content: finalContent,
+      title: title
+    };
   } catch (error: any) {
-    return { success: false, error: "Link okunurken bir hata oluştu. Lütfen geçerli bir URL girdiğinizden emin olun." };
+    console.error("Scrape Error:", error);
+    return { 
+      success: false, 
+      error: "Web sitesi taranırken bir hata oluştu. Sayfa yapısı çok karmaşık olabilir veya bot koruması bulunabilir." 
+    };
   }
 }
