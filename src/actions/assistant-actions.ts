@@ -45,3 +45,21 @@ export async function deleteAssistant(id: string) {
     return { success: false, error: error.message };
   }
 }
+
+export async function getAssistant(id: string) {
+  try {
+    const user = await syncUser();
+    if (!user) throw new Error("Unauthorized");
+
+    const assistant = await prisma.assistant.findUnique({
+      where: { id, userId: user.id },
+      include: {
+        knowledge: true,
+      },
+    });
+
+    return { success: true, assistant };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
