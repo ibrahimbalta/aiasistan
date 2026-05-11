@@ -55,6 +55,23 @@ export async function updateAssistant(id: string, data: {
   }
 }
 
+export async function getPublicAssistant(id: string) {
+  try {
+    const assistant = await prisma.assistant.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    if (!assistant) throw new Error("Asistan bulunamadı");
+    return { success: true, assistant };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
 export async function deleteAssistant(id: string) {
   try {
     const user = await syncUser();
