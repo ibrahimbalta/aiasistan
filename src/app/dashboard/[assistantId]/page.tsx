@@ -1,7 +1,7 @@
 "use client";
 
 import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2, X, Copy, ExternalLink, Save, Palette, Layout, Check, Terminal, Zap, Sparkles, Diamond, Ghost, Monitor, BarChart3, Globe } from "lucide-react";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { getAssistant, updateAssistant } from "@/actions/assistant-actions";
 import { deleteKnowledge, addKnowledge } from "@/actions/knowledge-actions";
 import { scrapeUrl } from "@/actions/web-actions";
@@ -46,7 +46,14 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
   const [sourceUrl, setSourceUrl] = useState("");
   const [sourceLoading, setSourceLoading] = useState(false);
 
-  useEffect(() => { params.then(p => setAssistantId(p.assistantId)); }, [params]);
+  // Unwrapping params safely
+  useEffect(() => {
+    let isMounted = true;
+    params.then(p => {
+      if (isMounted) setAssistantId(p.assistantId);
+    });
+    return () => { isMounted = false; };
+  }, [params]);
 
   useEffect(() => {
     if (!assistantId) return;
@@ -54,17 +61,22 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
   }, [assistantId]);
 
   async function loadAssistant() {
-    const result = await getAssistant(assistantId);
-    if (result.success) {
-      setAssistant(result.assistant);
-      setEditData({
-        name: result.assistant.name,
-        personality: result.assistant.personality || "",
-        description: result.assistant.description || "",
-        theme: result.assistant.theme || "default"
-      });
+    try {
+      const result = await getAssistant(assistantId);
+      if (result.success) {
+        setAssistant(result.assistant);
+        setEditData({
+          name: result.assistant.name || "",
+          personality: result.assistant.personality || "",
+          description: result.assistant.description || "",
+          theme: result.assistant.theme || "default"
+        });
+      }
+    } catch (err) {
+      console.error("Load error:", err);
+    } finally {
+      setFetching(false);
     }
-    setFetching(false);
   }
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
@@ -89,14 +101,18 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
 
   const handleUpdate = async () => {
     setUpdating(true);
-    if ((await updateAssistant(assistantId, editData)).success) {
-      toast.success("Ayarlar başarıyla kaydedildi!");
-      loadAssistant();
-    }
-    setUpdating(false);
+    try {
+      if ((await updateAssistant(assistantId, editData)).success) {
+        toast.success("Ayarlar başarıyla kaydedildi!");
+        loadAssistant();
+      }
+    } finally { setUpdating(false); }
   };
 
   const handleAddSource = async () => {
+    if (sourceType === "LINK" && !sourceUrl) return toast.error("URL girin.");
+    if (sourceType === "TEXT" && !sourceContent) return toast.error("Metin girin.");
+    
     setSourceLoading(true);
     try {
       let content = sourceContent;
@@ -105,7 +121,8 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         if (!scrape.success) throw new Error(scrape.error);
         content = scrape.content;
       }
-      if ((await addKnowledge(assistantId, sourceType === "TEXT" ? "TXT" : "LINK", content, sourceType === "TEXT" ? "Metin" : sourceUrl)).success) {
+      const result = await addKnowledge(assistantId, sourceType === "TEXT" ? "TXT" : "LINK", content, sourceType === "TEXT" ? "Metin" : sourceUrl);
+      if (result.success) {
         toast.success("Bilgi kaynağı eklendi!");
         setShowAddSourceModal(false);
         setSourceContent(""); setSourceUrl("");
@@ -115,18 +132,25 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
     finally { setSourceLoading(false); }
   };
 
-  const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/chat/${assistantId}`;
-  const widgetCode = `<iframe src="${shareUrl}" width="100%" height="600" frameborder="0"></iframe>`;
+  const shareUrl = useMemo(() => `${typeof window !== 'undefined' ? window.location.origin : ''}/chat/${assistantId}`, [assistantId]);
+  const widgetCode = useMemo(() => `<iframe src="${shareUrl}" width="100%" height="600" frameborder="0"></iframe>`, [shareUrl]);
 
-  if (fetching) return <div className="h-full flex items-center justify-center"><Loader2 className="w-8 h-8 text-[#D63384] animate-spin" /></div>;
+  if (fetching) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-10 h-10 text-[#D63384] animate-spin" />
+        <p className="text-sm font-black text-zinc-400 uppercase tracking-widest animate-pulse">Veriler Getiriliyor...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="h-full flex flex-col gap-8">
+    <div className="h-full flex flex-col gap-8 animate-in fade-in duration-500">
       {/* Header Area */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-6">
           <div className="w-16 h-16 bg-[#6B2D5C] rounded-2xl flex items-center justify-center font-black text-3xl text-white shadow-xl shadow-purple-900/20">
-            {assistant?.name?.[0]}
+            {assistant?.name?.[0] || "A"}
           </div>
           <div>
             <h1 className="text-3xl font-black text-zinc-900 uppercase italic leading-tight">{assistant?.name}</h1>
@@ -168,7 +192,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       {/* Content Area */}
       <div className="flex-1 min-h-0">
         {activeTab === "chat" && (
-          <div className="h-full flex flex-col bg-white rounded-[3rem] border border-zinc-100 overflow-hidden shadow-sm">
+          <div className="h-full flex flex-col bg-white rounded-[3rem] border border-zinc-100 overflow-hidden shadow-sm animate-in slide-in-from-bottom-2">
             <div className="flex-1 overflow-y-auto p-8 space-y-8">
               {messages.map((m, i) => (
                 <div key={i} className={`flex gap-4 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
@@ -190,7 +214,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         )}
 
         {activeTab === "knowledge" && (
-          <div className="space-y-8 pb-12 animate-in slide-in-from-bottom-4">
+          <div className="space-y-8 pb-12 animate-in slide-in-from-bottom-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                  <div className="p-3 bg-blue-100 rounded-2xl text-blue-600"><Database className="w-6 h-6" /></div>
@@ -202,7 +226,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {assistant?.knowledge?.map((item: any) => (
+              {assistant?.knowledge && assistant.knowledge.length > 0 ? assistant.knowledge.map((item: any) => (
                 <div key={item.id} className="p-8 rounded-[2.5rem] bg-white border border-zinc-100 flex flex-col justify-between hover:shadow-2xl transition-all group">
                   <div className="flex items-start justify-between mb-8">
                      <div className="w-14 h-14 bg-zinc-50 rounded-2xl flex items-center justify-center text-[#D63384] group-hover:bg-[#D63384] group-hover:text-white transition-all"><FileText className="w-7 h-7" /></div>
@@ -216,8 +240,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                     </div>
                   </div>
                 </div>
-              ))}
-              {assistant?.knowledge?.length === 0 && (
+              )) : (
                 <div className="md:col-span-3 py-20 text-center border-2 border-dashed border-zinc-100 rounded-[3rem] bg-zinc-50/50">
                    <div className="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-sm"><Globe className="w-10 h-10 text-zinc-200" /></div>
                    <h4 className="text-xl font-black text-zinc-900 uppercase">Henüz Veri Yok</h4>
@@ -229,7 +252,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         )}
 
         {activeTab === "settings" && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 pb-20 animate-in slide-in-from-bottom-4">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 pb-20 animate-in slide-in-from-bottom-2">
              <div className="space-y-8 bg-white p-10 rounded-[3rem] border border-zinc-100 shadow-sm">
                 <h3 className="text-xl font-black text-zinc-900 flex items-center gap-3 uppercase italic"><Settings className="w-6 h-6 text-[#6B2D5C]" /> Karakter & Kişilik</h3>
                 <div className="space-y-6">
@@ -266,7 +289,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         )}
       </div>
 
-      {/* Share Modals - Updated with brand colors */}
+      {/* Modals... */}
       {showShareModal && (
         <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
            <div className="bg-white rounded-[4rem] w-full max-w-xl p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
@@ -292,7 +315,6 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         </div>
       )}
 
-      {/* Add Knowledge Modal - Simplified */}
       {showAddSourceModal && (
         <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
            <div className="bg-white rounded-[4rem] w-full max-w-2xl p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
