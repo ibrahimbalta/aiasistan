@@ -8,13 +8,25 @@ export const getGroqClient = () => {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       console.warn("GROQ_API_KEY is missing. AI features will not work.");
-      // Return a dummy client or handle it in your routes
       return new Groq({ apiKey: "dummy_key_for_build" });
     }
     groqClient = new Groq({ apiKey });
   }
   return groqClient;
 };
+
+// Re-implement getChatCompletion for RAG and other modules
+export async function getChatCompletion(messages: any[]) {
+  const client = getGroqClient();
+  const response = await client.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages,
+    temperature: 0.7,
+    max_tokens: 1024,
+  });
+
+  return response.choices[0]?.message?.content || "";
+}
 
 // Also export the client for backward compatibility, but wrap it
 export const groq = new Proxy({} as Groq, {
