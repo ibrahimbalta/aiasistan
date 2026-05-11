@@ -34,3 +34,15 @@ export async function addKnowledge(assistantId: string, type: "TXT" | "PDF" | "L
     return { success: false, error: error.message };
   }
 }
+
+export async function deleteKnowledge(id: string, assistantId: string) {
+  try {
+    await prisma.knowledgeBase.delete({
+      where: { id },
+    });
+    revalidatePath(`/dashboard/${assistantId}`);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}

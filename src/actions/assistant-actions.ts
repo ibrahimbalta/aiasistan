@@ -30,6 +30,31 @@ export async function createAssistant(formData: {
   }
 }
 
+export async function updateAssistant(id: string, data: {
+  name: string;
+  description?: string;
+  personality?: string;
+}) {
+  try {
+    const user = await syncUser();
+    if (!user) throw new Error("Unauthorized");
+
+    const assistant = await prisma.assistant.update({
+      where: { id, userId: user.id },
+      data: {
+        name: data.name,
+        description: data.description,
+        personality: data.personality,
+      },
+    });
+
+    revalidatePath(`/dashboard/${id}`);
+    return { success: true, assistant };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
 export async function deleteAssistant(id: string) {
   try {
     const user = await syncUser();
