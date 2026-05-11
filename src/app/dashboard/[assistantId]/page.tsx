@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2 } from "lucide-react";
+import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle } from "lucide-react";
 import React, { useState } from "react";
 
 export default function AssistantDetailPage({ params }: { params: { assistantId: string } }) {
