@@ -4,32 +4,39 @@ export const dynamic = "force-dynamic";
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Bot, Mail, ArrowRight, Loader2 } from "lucide-react";
+import { Bot, Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSent, setIsSent] = useState(false);
-  const supabase = createClient();
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const supabase = createClient();
+    const { error } = await supabase.auth.signUp({
       email,
+      password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: {
+          full_name: name,
+        },
       },
     });
 
     if (error) {
-      toast.error(error.message);
+      setError(error.message);
     } else {
-      setIsSent(true);
-      toast.success("Kayıt bağlantısı e-posta adresinize gönderildi!");
+      router.push("/dashboard");
+      router.refresh();
     }
     setLoading(false);
   };
@@ -44,53 +51,70 @@ export default function SignUpPage() {
       </Link>
 
       <div className="w-full max-w-md p-8 rounded-3xl glass-morphism border border-white/10 shadow-2xl">
-        {!isSent ? (
-          <>
-            <h1 className="text-2xl font-bold mb-2">Ücretsiz Hesap Oluştur</h1>
-            <p className="text-zinc-400 mb-8 text-sm">Hemen kendi AI asistanını oluşturmaya başla.</p>
+        <h1 className="text-2xl font-bold mb-2">Ücretsiz Hesap Oluştur</h1>
+        <p className="text-zinc-400 mb-8 text-sm">Hemen kendi AI asistanını oluşturmaya başla.</p>
 
-            <form onSubmit={handleSignUp} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">E-posta Adresi</label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
-                  <input 
-                    required
-                    type="email"
-                    placeholder="ornek@eposta.com"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <button 
-                disabled={loading}
-                className="w-full bg-white text-black py-4 rounded-2xl font-bold hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Kayıt Ol"}
-                {!loading && <ArrowRight className="w-5 h-5" />}
-              </button>
-            </form>
-          </>
-        ) : (
-          <div className="text-center py-8 animate-in fade-in zoom-in duration-500">
-            <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Mail className="w-8 h-8 text-blue-500" />
-            </div>
-            <h2 className="text-2xl font-bold mb-4">E-postanı onayla</h2>
-            <p className="text-zinc-400 mb-8 leading-relaxed">
-              <strong>{email}</strong> adresine bir aktivasyon bağlantısı gönderdik. Lütfen gelen kutunu kontrol et.
-            </p>
-            <button 
-              onClick={() => setIsSent(false)}
-              className="text-sm text-zinc-500 hover:text-white transition-colors"
-            >
-              Farklı bir e-posta dene
-            </button>
+        {error && (
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+            {error}
           </div>
         )}
+
+        <form onSubmit={handleSignUp} className="space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Ad Soyad</label>
+            <div className="relative">
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+              <input 
+                required
+                type="text"
+                placeholder="Adınız Soyadınız"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">E-posta Adresi</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+              <input 
+                required
+                type="email"
+                placeholder="ornek@eposta.com"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Şifre</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+              <input 
+                required
+                type="password"
+                placeholder="En az 6 karakter"
+                minLength={6}
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <button 
+            disabled={loading}
+            className="w-full bg-white text-black py-4 rounded-2xl font-bold hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Kayıt Ol"}
+            {!loading && <ArrowRight className="w-5 h-5" />}
+          </button>
+        </form>
       </div>
 
       <p className="mt-8 text-zinc-500 text-sm">
