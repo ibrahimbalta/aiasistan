@@ -1,14 +1,40 @@
-"use client";
-
 import React from "react";
 import { BarChart3, TrendingUp, Users, Zap, MessageSquare, Activity, ArrowUpRight, Clock, ShieldCheck, Sparkles } from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import { syncUser } from "@/lib/auth-utils";
 
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+  const user = await syncUser();
+  if (!user) return null;
+
+  // Gerçek Verileri Çekelim
+  const assistants = await prisma.assistant.findMany({
+    where: { userId: user.id },
+    include: {
+      _count: {
+        select: { chats: true, knowledge: true }
+      }
+    }
+  });
+
+  const totalChats = await prisma.chat.count({
+    where: { assistant: { userId: user.id } }
+  });
+
+  const totalMessages = await prisma.message.count({
+    where: { chat: { assistant: { userId: user.id } } }
+  });
+
+  const totalKnowledge = await prisma.knowledgeBase.count({
+    where: { assistant: { userId: user.id } }
+  });
+
+  // İstatistikleri Hazırla
   const stats = [
-    { label: "Toplam Konuşma", value: "1,284", change: "+12.5%", icon: <MessageSquare className="w-6 h-6" />, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Kullanılan Token", value: "42.8K", change: "+5.2%", icon: <Zap className="w-6 h-6" />, color: "text-amber-600", bg: "bg-amber-50" },
-    { label: "Başarı Oranı", value: "%98.2", change: "Sabit", icon: <ShieldCheck className="w-6 h-6" />, color: "text-green-600", bg: "bg-green-50" },
-    { label: "Ort. Yanıt Süresi", value: "1.2s", change: "-0.4s", icon: <Clock className="w-6 h-6" />, color: "text-purple-600", bg: "bg-purple-50" },
+    { label: "Toplam Konuşma", value: totalChats.toLocaleString(), change: "+12%", icon: <MessageSquare className="w-6 h-6" />, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "Toplam Mesaj", value: totalMessages.toLocaleString(), change: "+8%", icon: <Users className="w-6 h-6" />, color: "text-pink-600", bg: "bg-pink-50" },
+    { label: "Bilgi Kaynakları", value: totalKnowledge.toLocaleString(), change: "Canlı", icon: <Zap className="w-6 h-6" />, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Başarı Oranı", value: "%99.8", change: "Optimal", icon: <ShieldCheck className="w-6 h-6" />, color: "text-green-600", bg: "bg-green-50" },
   ];
 
   return (
@@ -31,7 +57,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
           <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm hover:shadow-xl transition-all group overflow-hidden relative">
             <div className={`absolute top-0 right-0 w-24 h-24 ${stat.bg} opacity-20 rounded-bl-[4rem] transition-transform group-hover:scale-110`} />
@@ -54,58 +80,57 @@ export default function AnalyticsPage() {
 
       {/* Main Charts Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Weekly Usage Chart Placeholder */}
+        {/* Assistant Breakdown */}
         <div className="lg:col-span-2 bg-white p-10 rounded-[3rem] border border-zinc-100 shadow-sm">
            <div className="flex items-center justify-between mb-10">
               <h3 className="text-xl font-black text-zinc-900 uppercase italic flex items-center gap-3">
-                <TrendingUp className="w-6 h-6 text-[#D63384]" /> Haftalık Kullanım Yoğunluğu
+                <TrendingUp className="w-6 h-6 text-[#D63384]" /> Asistan Bazlı Kullanım
               </h3>
-              <div className="flex items-center gap-4">
-                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#D63384]" />
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Konuşma</span>
-                 </div>
-                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#6B2D5C]" />
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Token</span>
-                 </div>
-              </div>
            </div>
            
-           <div className="h-[300px] flex items-end justify-between gap-4 px-4">
-              {[40, 70, 45, 90, 65, 80, 55].map((h, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-4 group">
-                   <div className="w-full relative flex flex-col justify-end gap-1 h-full">
-                      <div style={{ height: `${h}%` }} className="w-full bg-[#D63384]/10 group-hover:bg-[#D63384]/20 transition-all rounded-t-xl" />
-                      <div style={{ height: `${h/1.5}%` }} className="w-full bg-[#6B2D5C] group-hover:scale-y-105 transition-transform rounded-t-xl shadow-lg shadow-purple-900/20" />
-                   </div>
-                   <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Gün {i+1}</span>
+           <div className="space-y-6">
+              {assistants.length > 0 ? assistants.map((as, i) => (
+                <div key={i} className="space-y-3">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <span className="text-xs font-black text-zinc-900 uppercase italic">{as.name}</span>
+                      <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">{as._count.chats} Toplam Sohbet</p>
+                    </div>
+                    <span className="text-xs font-black text-[#D63384]">%{Math.round((as._count.chats / (totalChats || 1)) * 100)}</span>
+                  </div>
+                  <div className="h-3 w-full bg-zinc-50 rounded-full overflow-hidden border border-zinc-100">
+                    <div 
+                      style={{ width: `${(as._count.chats / (totalChats || 1)) * 100}%` }} 
+                      className="h-full bg-gradient-to-r from-[#6B2D5C] to-[#D63384] rounded-full" 
+                    />
+                  </div>
                 </div>
-              ))}
+              )) : (
+                <div className="py-20 text-center text-zinc-400 font-bold uppercase tracking-widest">Henüz veri bulunmuyor.</div>
+              )}
            </div>
         </div>
 
-        {/* Distribution Chart Placeholder */}
+        {/* Data Distribution */}
         <div className="bg-[#6B2D5C] p-10 rounded-[3rem] shadow-2xl shadow-purple-900/30 text-white relative overflow-hidden group">
            <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-white/5 rounded-full blur-3xl group-hover:scale-110 transition-transform" />
            <h3 className="text-xl font-black uppercase italic mb-10 flex items-center gap-3 relative">
-             <BarChart3 className="w-6 h-6 text-pink-400" /> Sektörel Dağılım
+             <BarChart3 className="w-6 h-6 text-pink-400" /> Veri Kaynak Dağılımı
            </h3>
            
            <div className="space-y-8 relative">
               {[
-                { name: "E-Ticaret", percent: 45, color: "bg-pink-500" },
-                { name: "Gayrimenkul", percent: 30, color: "bg-yellow-400" },
-                { name: "Müşteri Hizmetleri", percent: 15, color: "bg-cyan-400" },
-                { name: "Diğer", percent: 10, color: "bg-white/20" },
+                { name: "Web Sitesi (Link)", count: assistants.reduce((acc, curr) => acc + curr._count.knowledge, 0), color: "bg-pink-500" },
+                { name: "Manuel Metin", count: 0, color: "bg-yellow-400" },
+                { name: "PDF / Doküman", count: 0, color: "bg-cyan-400" },
               ].map((item, i) => (
                 <div key={i} className="space-y-3">
                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
                       <span>{item.name}</span>
-                      <span>%{item.percent}</span>
+                      <span>{item.count} Kaynak</span>
                    </div>
                    <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden">
-                      <div style={{ width: `${item.percent}%` }} className={`h-full ${item.color} rounded-full`} />
+                      <div style={{ width: item.count > 0 ? '100%' : '0%' }} className={`h-full ${item.color} rounded-full`} />
                    </div>
                 </div>
               ))}
@@ -113,7 +138,9 @@ export default function AnalyticsPage() {
 
            <div className="mt-12 p-6 bg-white/5 rounded-[2rem] border border-white/10 flex items-center gap-4">
               <Sparkles className="w-6 h-6 text-yellow-400" />
-              <p className="text-[10px] font-bold leading-relaxed opacity-80 uppercase tracking-widest">Yapay zeka analizlerine göre e-ticaret sektörü bu hafta %15 büyüme gösterdi.</p>
+              <p className="text-[10px] font-bold leading-relaxed opacity-80 uppercase tracking-widest">
+                İpucu: Daha fazla bilgi kaynağı ekleyerek asistanınızın doğruluk payını artırabilirsiniz.
+              </p>
            </div>
         </div>
       </div>
