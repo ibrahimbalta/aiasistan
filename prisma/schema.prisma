@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  assistants Assistant[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Assistant {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  name        String
+  description String?
+  personality String?
+  knowledge   KnowledgeBase[]
+  chats       Chat[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model KnowledgeBase {
+  id          String   @id @default(cuid())
+  assistantId String
+  assistant   Assistant @relation(fields: [assistantId], references: [id])
+  type        String // PDF, TXT, LINK
+  fileName    String?
+  content     String? // Ham metin içeriği
+  fileUrl     String? // Bulut depolama linki
+  embedding   Unsupported("vector(1536)")? // Vektör verisi (OpenAI/HuggingFace uyumlu)
+  createdAt   DateTime @default(now())
+}
+
+model Chat {
+  id          String    @id @default(cuid())
+  assistantId String
+  assistant   Assistant @relation(fields: [assistantId], references: [id])
+  sessionId   String    // Anonim oturum ID
+  messages    Message[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  role      String   // user, assistant
+  content   String
+  createdAt DateTime @default(now())
+}
