@@ -1,20 +1,31 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  _prisma: PrismaClient | undefined;
 };
 
-function createPrismaClient() {
-  try {
-    return new PrismaClient({
-      log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-    });
-  } catch (e) {
-    console.warn("Failed to create PrismaClient:", e);
-    return new PrismaClient();
+function createPrismaClient(): PrismaClient {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL environment variable is not set");
   }
+  const adapter = new PrismaPg({ connectionString });
+  return new PrismaClient({ adapter });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Lazy Proxy: PrismaClient is ONLY created when a method is actually called.
+// This prevents build-time errors on Vercel.
+export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    if (!globalForPrisma._prisma) {
+      globalForPrisma._prisma = createPrismaClient();
+    }
+    const client = globalForPrisma._prisma;
+    const value = (client as any)[prop];
+    if (typeof value === "function") {
+      return value.bind(client);
+    }
+    return value;
+  },
+});

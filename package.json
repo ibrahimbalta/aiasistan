@@ -10,6 +10,7 @@
     "postinstall": "npx prisma generate"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@prisma/config": "^7.8.0",
     "@supabase/ssr": "^0.5.2",
@@ -22,6 +23,7 @@
     "lucide-react": "^0.474.0",
     "next": "16.2.6",
     "pdf-parse": "^1.1.1",
+    "pg": "^8.20.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-dropzone": "^14.3.5",
@@ -29,11 +31,12 @@
     "tailwind-merge": "^3.0.1"
   },
   "devDependencies": {
+    "@prisma/config": "^7.8.0",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.13.1",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "@prisma/config": "^7.8.0",
     "eslint": "^9.19.0",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4.0.0",

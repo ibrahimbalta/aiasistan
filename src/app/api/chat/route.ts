@@ -1,6 +1,8 @@
 import { askAssistant } from "@/lib/rag";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   try {
     const { assistantId, question, sessionId } = await req.json();
