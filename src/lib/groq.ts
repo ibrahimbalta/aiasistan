@@ -1,27 +1,25 @@
 import Groq from "groq-sdk";
 
-if (!process.env.GROQ_API_KEY) {
-  console.warn("GROQ_API_KEY is missing from environment variables");
-}
+// Create client lazily to avoid build-time errors when API key is missing
+let groqClient: Groq | null = null;
 
-export const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
-
-export async function getChatCompletion(messages: any[], model = "llama-3.3-70b-versatile") {
-  try {
-    const response = await groq.chat.completions.create({
-      messages,
-      model,
-      temperature: 0.7,
-      max_tokens: 1024,
-      top_p: 1,
-      stream: false,
-    });
-
-    return response.choices[0]?.message?.content || "";
-  } catch (error) {
-    console.error("Groq API Error:", error);
-    throw error;
+export const getGroqClient = () => {
+  if (!groqClient) {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      console.warn("GROQ_API_KEY is missing. AI features will not work.");
+      // Return a dummy client or handle it in your routes
+      return new Groq({ apiKey: "dummy_key_for_build" });
+    }
+    groqClient = new Groq({ apiKey });
   }
-}
+  return groqClient;
+};
+
+// Also export the client for backward compatibility, but wrap it
+export const groq = new Proxy({} as Groq, {
+  get: (target, prop) => {
+    const client = getGroqClient();
+    return (client as any)[prop];
+  }
+});
