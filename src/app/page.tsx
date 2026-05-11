@@ -81,6 +81,35 @@ export default function LandingPage() {
             <span className="text-[11px] font-black uppercase tracking-[0.2em] text-yellow-700">Yapay Zeka Devrimi Başladı</span>
           </motion.div>
 
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ 
+              duration: 1,
+              type: "spring",
+              stiffness: 100
+            }}
+            className="relative mb-12"
+          >
+            <motion.div
+              animate={{ y: [0, -20, 0] }}
+              transition={{ 
+                duration: 4, 
+                repeat: Infinity, 
+                ease: "easeInOut" 
+              }}
+              className="relative z-10"
+            >
+              <img 
+                src="/images/mascot.png" 
+                alt="AI Chatbot Mascot" 
+                className="w-40 h-40 md:w-56 md:h-56 mx-auto drop-shadow-[0_20px_50px_rgba(214,51,132,0.3)]"
+              />
+            </motion.div>
+            {/* Mascot Shadow Effect */}
+            <div className="absolute bottom-[-10%] left-1/2 -translate-x-1/2 w-24 h-4 bg-zinc-900/5 blur-xl rounded-full" />
+          </motion.div>
+
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8">
             İşletmeni AI ile<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6B2D5C] via-[#D63384] to-orange-400 italic pr-4">Yeniden İnşa Et</span>
