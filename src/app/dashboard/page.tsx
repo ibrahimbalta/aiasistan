@@ -66,43 +66,42 @@ export default async function DashboardPage() {
         {assistants.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {assistants.map((assistant) => (
-              <div className="relative group">
+              <div key={assistant.id} className="relative group">
                 <DeleteAssistantButton id={assistant.id} name={assistant.name} />
                 <Link 
-                  key={assistant.id}
                   href={`/dashboard/${assistant.id}`}
-                  className="group p-8 rounded-[3rem] bg-white border border-zinc-100 hover:border-pink-200 transition-all hover:shadow-2xl hover:shadow-pink-500/5 relative overflow-hidden block"
+                  className="group p-8 rounded-[3rem] bg-white border border-zinc-100 hover:border-pink-200 transition-all hover:shadow-2xl hover:shadow-pink-500/5 relative overflow-hidden block h-full"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-pink-50 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                <div className="flex items-center justify-between mb-8 relative z-10">
-                  <div className="w-14 h-14 bg-[#6B2D5C] rounded-2xl flex items-center justify-center font-black text-2xl text-white shadow-xl shadow-purple-900/20 group-hover:rotate-6 transition-transform">
-                    {assistant.name[0]}
+                  
+                  <div className="flex items-center justify-between mb-8 relative z-10">
+                    <div className="w-14 h-14 bg-[#6B2D5C] rounded-2xl flex items-center justify-center font-black text-2xl text-white shadow-xl shadow-purple-900/20 group-hover:rotate-6 transition-transform">
+                      {assistant.name[0]}
+                    </div>
+                    <div className="px-3 py-1 rounded-full bg-[#198754]/10 text-[#198754] text-[10px] font-black uppercase tracking-wider">
+                      Aktif
+                    </div>
                   </div>
-                  <div className="px-3 py-1 rounded-full bg-[#198754]/10 text-[#198754] text-[10px] font-black uppercase tracking-wider">
-                    Aktif
+                  
+                  <h4 className="text-xl font-black mb-2 text-zinc-900 group-hover:text-[#D63384] transition-colors uppercase italic">{assistant.name}</h4>
+                  <p className="text-zinc-500 text-sm mb-8 line-clamp-2 font-medium">{assistant.description || "Bu asistan için henüz bir açıklama eklenmedi."}</p>
+                  
+                  <div className="flex items-center justify-between pt-6 border-t border-zinc-50">
+                     <div className="flex gap-4">
+                        <div className="flex flex-col">
+                           <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">Mesaj</span>
+                           <span className="font-black text-zinc-900">{assistant._count.chats}</span>
+                        </div>
+                        <div className="flex flex-col">
+                           <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">Kaynak</span>
+                           <span className="font-black text-zinc-900">{assistant._count.knowledge}</span>
+                        </div>
+                     </div>
+                     <div className="w-10 h-10 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-[#D63384] group-hover:text-white transition-all">
+                        <ArrowRight className="w-5 h-5" />
+                     </div>
                   </div>
-                </div>
-                
-                <h4 className="text-xl font-black mb-2 text-zinc-900 group-hover:text-[#D63384] transition-colors uppercase italic">{assistant.name}</h4>
-                <p className="text-zinc-500 text-sm mb-8 line-clamp-2 font-medium">{assistant.description || "Bu asistan için henüz bir açıklama eklenmedi."}</p>
-                
-                <div className="flex items-center justify-between pt-6 border-t border-zinc-50">
-                   <div className="flex gap-4">
-                      <div className="flex flex-col">
-                         <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">Mesaj</span>
-                         <span className="font-black text-zinc-900">{assistant._count.chats}</span>
-                      </div>
-                      <div className="flex flex-col">
-                         <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">Kaynak</span>
-                         <span className="font-black text-zinc-900">{assistant._count.knowledge}</span>
-                      </div>
-                   </div>
-                   <div className="w-10 h-10 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-[#D63384] group-hover:text-white transition-all">
-                      <ArrowRight className="w-5 h-5" />
-                   </div>
-                </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>
