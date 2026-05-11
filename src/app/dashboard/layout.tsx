@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   PlusCircle, 
@@ -12,14 +12,24 @@ import {
   Settings, 
   LogOut,
   Sparkles,
-  ChevronRight
+  ChevronRight,
+  User
 } from "lucide-react";
-import { useUser, useClerk } from "@clerk/nextjs";
+import { createClient } from "@/lib/supabase/client";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user } = useUser();
-  const { signOut } = useClerk();
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function getUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    }
+    getUser();
+  }, [supabase]);
 
   const menuItems = [
     { label: "Genel Bakış", icon: <LayoutDashboard className="w-5 h-5" />, href: "/dashboard" },
@@ -29,8 +39,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { label: "Analizler", icon: <BarChart3 className="w-5 h-5" />, href: "/dashboard/analytics" },
   ];
 
-  const handleSignOut = () => {
-    signOut(() => window.location.href = "/");
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
   };
 
   return (
@@ -91,11 +103,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="p-6 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-sm">
              <div className="flex items-center gap-4 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-pink-500 flex items-center justify-center font-black text-white shadow-lg">
-                   {user?.firstName?.[0] || user?.emailAddresses[0].emailAddress[0].toUpperCase()}
+                   {user?.email?.[0].toUpperCase() || "A"}
                 </div>
                 <div className="flex flex-col min-w-0">
-                   <span className="text-sm font-black uppercase tracking-tighter truncate">{user?.firstName || "Kullanıcı"}</span>
-                   <span className="text-[10px] text-white/40 font-bold truncate opacity-60 italic">{user?.emailAddresses[0].emailAddress}</span>
+                   <span className="text-sm font-black uppercase tracking-tighter truncate">{user?.email?.split('@')[0] || "Kullanıcı"}</span>
+                   <span className="text-[10px] text-white/40 font-bold truncate opacity-60 italic">{user?.email}</span>
                 </div>
              </div>
              <button 
