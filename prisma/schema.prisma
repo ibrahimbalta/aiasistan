@@ -35,7 +35,7 @@ model Assistant {
 model KnowledgeBase {
   id          String   @id @default(cuid())
   assistantId String
-  assistant   Assistant @relation(fields: [assistantId], references: [id])
+  assistant   Assistant @relation(fields: [assistantId], references: [id], onDelete: Cascade)
   type        String // PDF, TXT, LINK
   fileName    String?
   content     String? // Ham metin içeriği
@@ -47,7 +47,7 @@ model KnowledgeBase {
 model Chat {
   id          String    @id @default(cuid())
   assistantId String
-  assistant   Assistant @relation(fields: [assistantId], references: [id])
+  assistant   Assistant @relation(fields: [assistantId], references: [id], onDelete: Cascade)
   sessionId   String    // Anonim oturum ID
   messages    Message[]
   createdAt   DateTime  @default(now())
@@ -57,7 +57,7 @@ model Chat {
 model Message {
   id        String   @id @default(cuid())
   chatId    String
-  chat      Chat     @relation(fields: [chatId], references: [id])
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   role      String   // user, assistant
   content   String
   createdAt DateTime @default(now())
