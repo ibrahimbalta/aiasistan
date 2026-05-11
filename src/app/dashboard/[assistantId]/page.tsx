@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2, X, Copy, ExternalLink, Save, Palette, Layout, Check, Terminal, Zap, Sparkles, Diamond, Ghost, Monitor, BarChart3, Globe, Database as DatabaseIcon } from "lucide-react";
+import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2, X, Copy, ExternalLink, Save, Palette, Layout, Check, Terminal, Zap, Sparkles, Diamond, Ghost, Monitor, BarChart3, Globe, Database as DatabaseIcon, ShoppingBag, Landmark, Gavel } from "lucide-react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { getAssistant, updateAssistant } from "@/actions/assistant-actions";
 import { deleteKnowledge, addKnowledge } from "@/actions/knowledge-actions";
@@ -10,6 +10,10 @@ import { toast } from "react-hot-toast";
 const THEMES = [
   { id: "default", name: "Deep Abyss", desc: "Modern, katmanlı karanlık mod.", colors: "bg-zinc-950", icon: <Ghost className="w-4 h-4 text-white" /> },
   { id: "glass", name: "Floating Glass", desc: "Havada asılı premium cam tasarımı.", colors: "bg-blue-500/20 backdrop-blur", icon: <Sparkles className="w-4 h-4 text-blue-500" /> },
+  { id: "ecommerce", name: "E-Commerce Pro", desc: "Canlı turuncu, e-ticaret odaklı.", colors: "bg-orange-500", icon: <ShoppingBag className="w-4 h-4 text-white" /> },
+  { id: "corporate", name: "Banking Blue", desc: "Kurumsal ve güven veren lacivert.", colors: "bg-[#002D72]", icon: <Landmark className="w-4 h-4 text-white" /> },
+  { id: "creative", name: "Studio Pink", desc: "Yüksek kontrastlı, yaratıcı ajans stili.", colors: "bg-[#D63384]", icon: <Palette className="w-4 h-4 text-white" /> },
+  { id: "legal", name: "Classic Legal", desc: "Ciddi, döküman ve hukuk temalı.", colors: "bg-[#2C2420]", icon: <Gavel className="w-4 h-4 text-[#D4C4A8]" /> },
   { id: "vibrant", name: "Cyber Protocol", desc: "Gelecekçi neon ve geometrik hatlar.", colors: "bg-cyan-950 border-cyan-500", icon: <Zap className="w-4 h-4 text-cyan-400" /> },
   { id: "minimal", name: "Luxury Serif", desc: "Siyah ve altın uyumlu asil duruş.", colors: "bg-black border-amber-900", icon: <Diamond className="w-4 h-4 text-amber-500" /> },
   { id: "terminal", name: "Retro Terminal", desc: "80'ler bilgisayar terminali ruhu.", colors: "bg-black border-green-900", icon: <Terminal className="w-4 h-4 text-green-500" /> },
@@ -191,14 +195,14 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       {/* Content Area */}
       <div className="flex-1 min-h-0">
         {activeTab === "chat" && (
-          <div className="h-full flex flex-col bg-white rounded-[3rem] border border-zinc-100 shadow-sm animate-in slide-in-from-bottom-2">
+          <div className="h-full flex flex-col bg-white rounded-[3rem] border border-zinc-100 overflow-hidden shadow-sm animate-in slide-in-from-bottom-2">
             <div className="flex-1 overflow-y-auto p-8 space-y-8">
               {messages.map((m, i) => (
                 <div key={i} className={`flex gap-4 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? "bg-[#6B2D5C] text-white" : "bg-zinc-100 text-[#D63384]"}`}>
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? s.botBubble : s.userBubble}`}>
                     {m.role === "assistant" ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
                   </div>
-                  <div className={`max-w-[75%] p-5 rounded-[2rem] text-sm font-medium leading-relaxed ${m.role === "assistant" ? "bg-zinc-50 text-zinc-800 rounded-tl-none border border-zinc-100" : "bg-[#D63384] text-white rounded-br-none shadow-xl shadow-pink-500/10"}`}>
+                  <div className={`max-w-[75%] p-5 text-sm leading-relaxed ${m.role === "assistant" ? s.botBubble : s.userBubble}`}>
                     {m.content}
                   </div>
                 </div>
@@ -252,7 +256,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
 
         {activeTab === "settings" && (
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 pb-20 animate-in slide-in-from-bottom-2">
-             <div className="space-y-8 bg-white p-10 rounded-[3rem] border border-zinc-100 shadow-sm">
+             <div className="space-y-8 bg-white p-10 rounded-[3rem] border border-zinc-100 shadow-sm overflow-hidden">
                 <h3 className="text-xl font-black text-zinc-900 flex items-center gap-3 uppercase italic"><Settings className="w-6 h-6 text-[#6B2D5C]" /> Karakter & Kişilik</h3>
                 <div className="space-y-6">
                   <div>
@@ -269,9 +273,9 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                 </div>
              </div>
 
-             <div className="space-y-8 bg-white p-10 rounded-[3rem] border border-zinc-100 shadow-sm">
+             <div className="space-y-8 bg-white p-10 rounded-[3rem] border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
                 <h3 className="text-xl font-black text-zinc-900 flex items-center gap-3 uppercase italic"><Palette className="w-6 h-6 text-[#D63384]" /> Görünüm & Şablonlar</h3>
-                <div className="grid grid-cols-2 gap-4 max-h-[600px] overflow-y-auto pr-2 scrollbar-hide">
+                <div className="grid grid-cols-2 gap-4 overflow-y-auto pr-2 scrollbar-hide flex-1 pb-4">
                   {THEMES.map(t => (
                     <div key={t.id} onClick={() => setEditData({...editData, theme: t.id})} className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-4 relative overflow-hidden group ${editData.theme === t.id ? "border-[#D63384] bg-pink-50" : "border-zinc-50 bg-zinc-50 hover:border-zinc-200"}`}>
                       <div className={`w-full h-16 rounded-2xl ${t.colors} flex items-center justify-center shadow-lg transition-transform group-hover:rotate-3`}>{t.icon}</div>
@@ -288,7 +292,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         )}
       </div>
 
-      {/* Modals... */}
+      {/* Modals */}
       {showShareModal && (
         <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
            <div className="bg-white rounded-[4rem] w-full max-w-xl p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
@@ -347,3 +351,8 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
     </div>
   );
 }
+
+const s = {
+  userBubble: "bg-blue-600 text-white rounded-2xl rounded-br-none",
+  botBubble: "bg-zinc-100 text-zinc-800 rounded-2xl rounded-bl-none",
+};
