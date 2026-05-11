@@ -34,6 +34,7 @@ export async function updateAssistant(id: string, data: {
   name: string;
   description?: string;
   personality?: string;
+  theme?: string;
 }) {
   try {
     const user = await syncUser();
@@ -45,6 +46,7 @@ export async function updateAssistant(id: string, data: {
         name: data.name,
         description: data.description,
         personality: data.personality,
+        theme: data.theme,
       },
     });
 
@@ -62,6 +64,7 @@ export async function getPublicAssistant(id: string) {
       select: {
         id: true,
         name: true,
+        theme: true,
       },
     });
 
