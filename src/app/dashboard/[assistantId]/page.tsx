@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2, X, Copy, ExternalLink, Save, Palette, Layout, Check, Terminal, Zap, Sparkles, Diamond, Ghost, Monitor, BarChart3, Globe } from "lucide-react";
+import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2, X, Copy, ExternalLink, Save, Palette, Layout, Check, Terminal, Zap, Sparkles, Diamond, Ghost, Monitor, BarChart3, Globe, Database as DatabaseIcon } from "lucide-react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { getAssistant, updateAssistant } from "@/actions/assistant-actions";
 import { deleteKnowledge, addKnowledge } from "@/actions/knowledge-actions";
@@ -46,7 +46,6 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
   const [sourceUrl, setSourceUrl] = useState("");
   const [sourceLoading, setSourceLoading] = useState(false);
 
-  // Unwrapping params safely
   useEffect(() => {
     let isMounted = true;
     params.then(p => {
@@ -137,7 +136,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
 
   if (fetching) {
     return (
-      <div className="h-full flex flex-col items-center justify-center space-y-4">
+      <div className="h-full flex flex-col items-center justify-center space-y-4 bg-white rounded-[3rem]">
         <Loader2 className="w-10 h-10 text-[#D63384] animate-spin" />
         <p className="text-sm font-black text-zinc-400 uppercase tracking-widest animate-pulse">Veriler Getiriliyor...</p>
       </div>
@@ -192,7 +191,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       {/* Content Area */}
       <div className="flex-1 min-h-0">
         {activeTab === "chat" && (
-          <div className="h-full flex flex-col bg-white rounded-[3rem] border border-zinc-100 overflow-hidden shadow-sm animate-in slide-in-from-bottom-2">
+          <div className="h-full flex flex-col bg-white rounded-[3rem] border border-zinc-100 shadow-sm animate-in slide-in-from-bottom-2">
             <div className="flex-1 overflow-y-auto p-8 space-y-8">
               {messages.map((m, i) => (
                 <div key={i} className={`flex gap-4 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
@@ -217,7 +216,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
           <div className="space-y-8 pb-12 animate-in slide-in-from-bottom-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                 <div className="p-3 bg-blue-100 rounded-2xl text-blue-600"><Database className="w-6 h-6" /></div>
+                 <div className="p-3 bg-blue-100 rounded-2xl text-blue-600"><DatabaseIcon className="w-6 h-6" /></div>
                  <h3 className="text-xl font-black text-zinc-900 uppercase">Bilgi Havuzu</h3>
               </div>
               <button onClick={() => setShowAddSourceModal(true)} className="bg-[#198754] text-white px-8 py-3.5 rounded-2xl text-sm font-black flex items-center gap-2 shadow-xl shadow-green-500/20 hover:bg-[#157347] transition-all uppercase tracking-widest">
