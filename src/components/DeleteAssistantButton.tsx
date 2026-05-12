@@ -40,13 +40,13 @@ export default function DeleteAssistantButton({ id, name }: DeleteAssistantButto
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="absolute top-6 right-12 z-20 p-2 text-zinc-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+      className="absolute -top-2 -right-2 z-[30] p-2.5 bg-white border border-zinc-100 text-zinc-400 hover:text-white hover:bg-red-500 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 group/del"
       title="Asistanı Sil"
     >
       {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Loader2 className="w-4 h-4 animate-spin text-red-500" />
       ) : (
-        <Trash2 className="w-4 h-4" />
+        <Trash2 className="w-4 h-4 group-hover/del:animate-bounce" />
       )}
     </button>
   );
