@@ -141,10 +141,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
              >
                 <LogOut className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> ÇIKIŞ YAP
              </button>
-             {/* Floating Sidebar Robot */}
-             <div className="absolute -bottom-4 -left-4 w-24 h-24 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all pointer-events-none">
-                <img src="/images/robot.png" alt="Robot Mascot" className="w-full h-full object-contain" />
-             </div>
           </div>
         </div>
       </aside>
