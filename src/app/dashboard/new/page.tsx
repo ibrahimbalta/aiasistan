@@ -39,7 +39,7 @@ export default function NewAssistantPage() {
     <div className="max-w-4xl mx-auto py-10 animate-in fade-in duration-700 pb-20">
       {/* Header */}
       <div className="text-center mb-10 sm:mb-16">
-        <h1 className="text-2xl sm:text-4xl font-black text-zinc-900 tracking-tighter uppercase italic mb-3 sm:mb-4 px-4">Yeni Asistan Oluştur</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight uppercase mb-3 px-4 leading-tight">Yeni Asistan Oluştur</h1>
         <p className="text-sm sm:text-base text-zinc-500 font-medium px-6">Asistanınızın kimliğini belirleyin ve onu hayata döndürün.</p>
       </div>
 
@@ -53,7 +53,7 @@ export default function NewAssistantPage() {
               }`}>
                 {React.cloneElement(s.icon as React.ReactElement, { className: "w-4 h-4 sm:w-5 sm:h-5" })}
               </div>
-              <span className={`text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-center whitespace-nowrap ${step >= s.id ? "text-[#D63384]" : "text-zinc-300"}`}>{s.label}</span>
+              <span className={`text-[8px] sm:text-[10px] font-bold uppercase tracking-wider text-center whitespace-nowrap ${step >= s.id ? "text-[#D63384]" : "text-zinc-300"}`}>{s.label}</span>
             </div>
             {i < steps.length - 1 && (
               <div className={`w-8 sm:w-20 h-0.5 rounded-full transition-all duration-500 shrink-0 ${step > s.id ? "bg-[#D63384]" : "bg-zinc-100"}`} />
@@ -69,7 +69,7 @@ export default function NewAssistantPage() {
           <div className="space-y-8 animate-in slide-in-from-right-4">
              <div className="flex items-center gap-4 mb-8 sm:mb-10">
                 <div className="p-2.5 sm:p-3 bg-pink-50 rounded-xl sm:rounded-2xl text-[#D63384] shrink-0"><MessageSquare className="w-5 h-5 sm:w-6 sm:h-6" /></div>
-                <h3 className="text-xl sm:text-2xl font-black text-zinc-900 uppercase italic">Asistan Kimliği</h3>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight uppercase">Asistan Kimliği</h3>
              </div>
              <div>
                 <label className="block text-[10px] sm:text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 sm:mb-4">Asistan Adı</label>
@@ -98,7 +98,7 @@ export default function NewAssistantPage() {
           <div className="space-y-8 animate-in slide-in-from-right-4">
              <div className="flex items-center gap-4 mb-8 sm:mb-10">
                 <div className="p-2.5 sm:p-3 bg-purple-50 rounded-xl sm:rounded-2xl text-[#6B2D5C] shrink-0"><Bot className="w-5 h-5 sm:w-6 sm:h-6" /></div>
-                <h3 className="text-xl sm:text-2xl font-black text-zinc-900 uppercase italic">Karakter & Tavır</h3>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight uppercase">Karakter & Tavır</h3>
              </div>
              <div>
                 <label className="block text-[10px] sm:text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 sm:mb-4">Konuşma Tarzı / Kişilik</label>
@@ -118,7 +118,7 @@ export default function NewAssistantPage() {
              <div className="w-16 h-16 sm:w-24 sm:h-24 bg-green-50 rounded-xl sm:rounded-[2rem] flex items-center justify-center mx-auto text-green-500 mb-6 sm:mb-8">
                 <Sparkles className="w-8 h-8 sm:w-12 sm:h-12" />
              </div>
-             <h3 className="text-xl sm:text-3xl font-black text-zinc-900 uppercase italic">Her Şey Hazır!</h3>
+             <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 uppercase">Her Şey Hazır!</h3>
              <p className="text-sm sm:text-base text-zinc-500 font-medium max-w-sm mx-auto px-4">
                 <b>{formData.name}</b> isimli asistanınızı oluşturmak için aşağıdaki butona tıklayın.
              </p>
@@ -145,7 +145,7 @@ export default function NewAssistantPage() {
             <button 
               onClick={() => setStep(step + 1)}
               disabled={step === 1 && !formData.name}
-              className="px-6 sm:px-10 py-3 sm:py-4 bg-zinc-900 text-white rounded-xl sm:rounded-2xl font-black text-sm sm:text-lg hover:bg-zinc-800 transition-all shadow-xl shadow-zinc-200 flex items-center gap-2 disabled:opacity-30 uppercase tracking-widest"
+              className="px-6 sm:px-10 py-3 sm:py-4 bg-zinc-900 text-white rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base hover:bg-zinc-800 transition-all shadow-xl shadow-zinc-200 flex items-center gap-2 disabled:opacity-30 uppercase tracking-wider"
             >
               Devam Et <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
@@ -153,7 +153,7 @@ export default function NewAssistantPage() {
             <button 
               onClick={handleCreate}
               disabled={loading}
-              className="px-8 py-4 sm:px-12 sm:py-5 bg-[#D63384] text-white rounded-xl sm:rounded-2xl font-black text-base sm:text-xl hover:bg-[#c22e77] transition-all shadow-2xl shadow-pink-500/20 flex items-center justify-center gap-2 sm:gap-3 uppercase tracking-widest"
+              className="px-8 py-4 sm:px-12 sm:py-5 bg-[#D63384] text-white rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:bg-[#c22e77] transition-all shadow-2xl shadow-pink-500/20 flex items-center justify-center gap-2 sm:gap-3 uppercase tracking-wider"
             >
               {loading ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <PlusCircle className="w-5 h-5 sm:w-6 sm:h-6" />}
               <span className="whitespace-nowrap">Asistanı Oluştur</span>

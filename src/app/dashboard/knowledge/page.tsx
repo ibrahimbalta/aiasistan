@@ -59,11 +59,11 @@ export default function KnowledgePage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-             <Sparkles className="w-5 h-5 text-yellow-500" />
-             <span className="text-[10px] font-black text-[#D63384] uppercase tracking-[0.3em]">Merkezi Yönetim</span>
+             <Sparkles className="w-4 h-4 text-yellow-500" />
+             <span className="text-[10px] font-bold text-[#D63384] uppercase tracking-wider">Merkezi Yönetim</span>
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-zinc-900 uppercase italic leading-none">Bilgi Havuzu</h1>
-          <p className="text-zinc-500 font-medium mt-2">Tüm asistanlarınızın bilgi kaynaklarını tek bir yerden yönetin.</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 leading-tight">Bilgi Havuzu</h1>
+          <p className="text-sm sm:text-base text-zinc-500 font-medium mt-1">Tüm asistanlarınızın bilgi kaynaklarını tek bir yerden yönetin.</p>
         </div>
       </div>
 
@@ -73,7 +73,7 @@ export default function KnowledgePage() {
         <input 
           type="text" 
           placeholder="Kaynaklarda veya asistan adlarında ara..." 
-          className="w-full bg-white border border-zinc-100 rounded-[2rem] pl-16 pr-6 py-5 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all shadow-sm"
+          className="w-full bg-white border border-zinc-100 rounded-2xl sm:rounded-[2rem] pl-16 pr-6 py-4 sm:py-5 text-zinc-900 font-semibold focus:outline-none focus:ring-4 focus:ring-pink-500/10 focus:border-[#D63384] transition-all shadow-sm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -84,28 +84,28 @@ export default function KnowledgePage() {
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-zinc-50">
-              <th className="px-10 py-6 text-[10px] font-black text-zinc-400 uppercase tracking-widest">KAYNAK ADI</th>
-              <th className="px-10 py-6 text-[10px] font-black text-zinc-400 uppercase tracking-widest">TÜR</th>
-              <th className="px-10 py-6 text-[10px] font-black text-zinc-400 uppercase tracking-widest">AİT OLDUĞU ASİSTAN</th>
-              <th className="px-10 py-6 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-right">İŞLEMLER</th>
+              <th className="px-6 sm:px-10 py-5 sm:py-6 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">KAYNAK ADI</th>
+              <th className="px-6 sm:px-10 py-5 sm:py-6 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">TÜR</th>
+              <th className="px-6 sm:px-10 py-5 sm:py-6 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">ASİSTAN</th>
+              <th className="px-6 sm:px-10 py-5 sm:py-6 text-[10px] font-bold text-zinc-400 uppercase tracking-wider text-right">İŞLEMLER</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-50">
             {filteredKnowledge.map((item) => (
               <tr key={item.id} className="hover:bg-zinc-50/50 transition-colors group">
-                <td className="px-10 py-6">
+                <td className="px-6 sm:px-10 py-5 sm:py-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-pink-50 text-[#D63384] flex items-center justify-center group-hover:scale-110 transition-transform"><FileText className="w-6 h-6" /></div>
-                    <span className="font-black text-zinc-900 uppercase italic truncate max-w-[200px]">{item.fileName || "Metin Kaynağı"}</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-pink-50 text-[#D63384] flex items-center justify-center group-hover:scale-110 transition-transform"><FileText className="w-5 h-5 sm:w-6 sm:h-6" /></div>
+                    <span className="font-bold text-zinc-900 truncate max-w-[150px] sm:max-w-[200px]">{item.fileName || "Metin Kaynağı"}</span>
                   </div>
                 </td>
-                <td className="px-10 py-6">
-                  <span className="px-3 py-1 rounded-full bg-zinc-100 text-[10px] font-black text-zinc-500 uppercase tracking-tighter">
+                <td className="px-6 sm:px-10 py-5 sm:py-6">
+                  <span className="px-3 py-1 rounded-full bg-zinc-100 text-[9px] sm:text-[10px] font-bold text-zinc-500 uppercase tracking-tight">
                     {item.type}
                   </span>
                 </td>
-                <td className="px-10 py-6">
-                  <Link href={`/dashboard/${item.assistantId}`} className="inline-flex items-center gap-2 text-zinc-500 hover:text-[#6B2D5C] transition-colors font-bold text-sm">
+                <td className="px-6 sm:px-10 py-5 sm:py-6">
+                  <Link href={`/dashboard/${item.assistantId}`} className="inline-flex items-center gap-2 text-zinc-500 hover:text-[#6B2D5C] transition-colors font-semibold text-xs sm:text-sm">
                     {item.assistant?.name}
                     <ExternalLink className="w-3 h-3" />
                   </Link>
@@ -126,11 +126,11 @@ export default function KnowledgePage() {
 
         {filteredKnowledge.length === 0 && !loading && (
           <div className="py-32 text-center flex flex-col items-center justify-center">
-             <div className="w-24 h-24 bg-zinc-50 rounded-[2.5rem] flex items-center justify-center mb-6">
-                <Database className="w-12 h-12 text-zinc-200" />
+             <div className="w-20 h-20 sm:w-24 sm:h-24 bg-zinc-50 rounded-2xl sm:rounded-[2.5rem] flex items-center justify-center mb-6">
+                <Database className="w-10 h-10 sm:w-12 sm:h-12 text-zinc-200" />
              </div>
-             <h4 className="text-xl font-black text-zinc-900 uppercase italic mb-2">Henüz Kaynak Bulunamadı</h4>
-             <p className="text-zinc-500 font-medium">Asistanlarınıza döküman veya web sitesi eklediğinizde burada listelenecektir.</p>
+             <h4 className="text-xl font-bold text-zinc-900 mb-2">Henüz Kaynak Bulunamadı</h4>
+             <p className="text-sm sm:text-base text-zinc-500 font-medium px-4">Asistanlarınıza döküman veya web sitesi eklediğinizde burada listelenecektir.</p>
           </div>
         )}
       </div>

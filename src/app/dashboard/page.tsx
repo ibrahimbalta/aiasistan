@@ -24,12 +24,12 @@ export default async function DashboardPage() {
     <div className="space-y-10 animate-in fade-in duration-700">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-zinc-900 mb-2 uppercase italic leading-tight">Merhaba, {user?.name?.split(' ')[0]}</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 mb-2 leading-tight">Merhaba, {user?.name?.split(' ')[0]}</h1>
           <p className="text-sm sm:text-base text-zinc-500 font-medium">Platformunuzdaki genel performans ve asistan durumları.</p>
         </div>
         <Link 
           href="/dashboard/new" 
-          className="bg-[#D63384] text-white px-6 py-3.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 hover:bg-[#c22e77] transition-all shadow-xl shadow-pink-500/20 uppercase tracking-widest shrink-0"
+          className="bg-[#D63384] text-white px-6 py-3.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 hover:bg-[#c22e77] transition-all shadow-xl shadow-pink-500/20 uppercase tracking-wider shrink-0"
         >
           <Plus className="w-5 h-5" />
           Yeni Asistan Oluştur
@@ -47,10 +47,10 @@ export default async function DashboardPage() {
           <div key={i} className="p-4 sm:p-8 rounded-2xl sm:rounded-[2.5rem] bg-white border border-zinc-100 shadow-sm hover:shadow-xl transition-all group overflow-hidden">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl ${stat.color} group-hover:scale-110 transition-transform shrink-0`}>{stat.icon}</div>
-              <span className="text-[8px] sm:text-[10px] font-black text-green-500 uppercase tracking-widest bg-green-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">Canlı</span>
+              <span className="text-[8px] sm:text-[9px] font-bold text-green-500 uppercase tracking-wider bg-green-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">Canlı</span>
             </div>
-            <div className="text-xl sm:text-3xl font-black text-zinc-900 mb-1 truncate">{stat.value}</div>
-            <div className="text-[8px] sm:text-xs font-bold text-zinc-400 uppercase tracking-widest truncate">{stat.label}</div>
+            <div className="text-xl sm:text-2xl font-extrabold text-zinc-900 mb-1 truncate">{stat.value}</div>
+            <div className="text-[8px] sm:text-[10px] font-bold text-zinc-400 uppercase tracking-wider truncate">{stat.label}</div>
           </div>
         ))}
       </div>
@@ -59,7 +59,7 @@ export default async function DashboardPage() {
       <div className="mt-12">
         <div className="flex items-center gap-4 mb-8">
            <div className="h-px flex-1 bg-zinc-200" />
-           <h3 className="text-sm font-black text-zinc-400 uppercase tracking-[0.4em]">ASİSTANLARINIZ</h3>
+            <h3 className="text-[10px] sm:text-xs font-bold text-zinc-400 uppercase tracking-widest">ASİSTANLARINIZ</h3>
            <div className="h-px flex-1 bg-zinc-200" />
         </div>
         
@@ -75,26 +75,26 @@ export default async function DashboardPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-pink-50 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   <div className="flex items-center justify-between mb-6 sm:mb-8 relative z-10">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#6B2D5C] rounded-xl sm:rounded-2xl flex items-center justify-center font-black text-xl sm:text-2xl text-white shadow-xl shadow-purple-900/20 group-hover:rotate-6 transition-transform shrink-0">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#6B2D5C] rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-lg sm:text-xl text-white shadow-xl shadow-purple-900/20 group-hover:rotate-6 transition-transform shrink-0">
                       {assistant.name[0]}
                     </div>
-                    <div className="px-3 py-1 rounded-full bg-[#198754]/10 text-[#198754] text-[10px] font-black uppercase tracking-wider">
+                    <div className="px-3 py-1 rounded-full bg-[#198754]/10 text-[#198754] text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">
                       Aktif
                     </div>
                   </div>
                   
-                  <h4 className="text-lg sm:text-xl font-black mb-2 text-zinc-900 group-hover:text-[#D63384] transition-colors uppercase italic truncate">{assistant.name}</h4>
+                  <h4 className="text-base sm:text-lg font-bold mb-1 text-zinc-900 group-hover:text-[#D63384] transition-colors truncate">{assistant.name}</h4>
                   <p className="text-zinc-500 text-xs sm:text-sm mb-6 sm:mb-8 line-clamp-2 font-medium">{assistant.description || "Bu asistan için henüz bir açıklama eklenmedi."}</p>
                   
                   <div className="flex items-center justify-between pt-4 sm:pt-6 border-t border-zinc-50">
                      <div className="flex gap-4">
                         <div className="flex flex-col">
-                           <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">Mesaj</span>
-                           <span className="font-black text-zinc-900 text-sm sm:text-base">{assistant._count.chats}</span>
+                           <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tight">Mesaj</span>
+                           <span className="font-bold text-zinc-900 text-xs sm:text-sm">{assistant._count.chats}</span>
                         </div>
                         <div className="flex flex-col">
-                           <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">Kaynak</span>
-                           <span className="font-black text-zinc-900 text-sm sm:text-base">{assistant._count.knowledge}</span>
+                           <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tight">Kaynak</span>
+                           <span className="font-bold text-zinc-900 text-xs sm:text-sm">{assistant._count.knowledge}</span>
                         </div>
                      </div>
                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-[#D63384] group-hover:text-white transition-all">

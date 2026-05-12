@@ -147,7 +147,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
     return (
       <div className="h-full flex flex-col items-center justify-center space-y-4 bg-white rounded-[3rem]">
         <Loader2 className="w-10 h-10 text-[#D63384] animate-spin" />
-        <p className="text-sm font-black text-zinc-400 uppercase tracking-widest animate-pulse">Veriler Getiriliyor...</p>
+        <p className="text-sm font-bold text-zinc-400 uppercase tracking-wider animate-pulse">Veriler Getiriliyor...</p>
       </div>
     );
   }
@@ -157,22 +157,22 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       {/* Header Area */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4 sm:gap-6">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#6B2D5C] rounded-2xl flex items-center justify-center font-black text-2xl sm:text-3xl text-white shadow-xl shadow-purple-900/20 shrink-0">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#6B2D5C] rounded-2xl flex items-center justify-center font-extrabold text-xl sm:text-2xl text-white shadow-xl shadow-purple-900/20 shrink-0">
             {assistant?.name?.[0] || "A"}
           </div>
           <div className="min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 uppercase italic leading-tight truncate">{assistant?.name}</h1>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight truncate leading-tight">{assistant?.name}</h1>
             <div className="flex items-center gap-3 mt-1">
-               <span className="px-2 py-0.5 rounded-md bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest border border-green-200">Aktif</span>
-               <span className="text-zinc-400 text-[10px] font-bold font-mono tracking-tighter truncate">ID: {assistantId}</span>
+               <span className="px-2 py-0.5 rounded-md bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider border border-green-200">Aktif</span>
+               <span className="text-zinc-400 text-[10px] font-medium font-mono truncate">ID: {assistantId}</span>
             </div>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:flex items-center gap-3">
-          <button onClick={() => setShowShareModal(true)} className="px-4 sm:px-6 py-3 bg-white border border-zinc-100 rounded-2xl text-[10px] sm:text-sm font-black text-[#6B2D5C] hover:bg-zinc-50 transition-all flex items-center justify-center gap-2 shadow-sm uppercase tracking-widest">
+          <button onClick={() => setShowShareModal(true)} className="px-4 sm:px-6 py-3 bg-white border border-zinc-100 rounded-2xl text-[10px] sm:text-sm font-bold text-[#6B2D5C] hover:bg-zinc-50 transition-all flex items-center justify-center gap-2 shadow-sm uppercase tracking-wider">
             <Share2 className="w-4 h-4" /> <span className="hidden xs:inline">Link Paylaş</span><span className="xs:hidden">Paylaş</span>
           </button>
-          <button onClick={() => setShowWidgetModal(true)} className="px-4 sm:px-6 py-3 bg-[#6B2D5C] text-white rounded-2xl text-[10px] sm:text-sm font-black hover:bg-[#522246] transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-900/10 uppercase tracking-widest">
+          <button onClick={() => setShowWidgetModal(true)} className="px-4 sm:px-6 py-3 bg-[#6B2D5C] text-white rounded-2xl text-[10px] sm:text-sm font-bold hover:bg-[#522246] transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-900/10 uppercase tracking-wider">
             <Code className="w-4 h-4" /> <span className="hidden xs:inline">Widget Kodu</span><span className="xs:hidden">Widget</span>
           </button>
         </div>
@@ -189,7 +189,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
           <button 
             key={tab.id} 
             onClick={() => setActiveTab(tab.id)} 
-            className={`flex items-center gap-2 px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${
+            className={`flex items-center gap-2 px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap shrink-0 ${
               activeTab === tab.id ? "bg-[#D63384] text-white shadow-lg shadow-pink-500/20" : "text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50"
             }`}
           >
@@ -217,7 +217,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
             </div>
             <form onSubmit={handleSend} className="p-4 sm:p-6 bg-zinc-50/50 border-t border-zinc-100 flex flex-col sm:flex-row gap-3 sm:gap-4">
               <input type="text" placeholder="Asistanınızı test edin..." className="flex-1 bg-white border border-zinc-200 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all" value={input} onChange={(e) => setInput(e.target.value)} />
-              <button disabled={loading} className="bg-[#6B2D5C] text-white py-3 sm:px-8 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm uppercase tracking-widest hover:bg-[#522246] transition-all flex items-center justify-center gap-2 shrink-0"><Send className="w-4 h-4 sm:w-5 sm:h-5" /> Gönder</button>
+              <button disabled={loading} className="bg-[#6B2D5C] text-white py-3 sm:px-8 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#522246] transition-all flex items-center justify-center gap-2 shrink-0"><Send className="w-4 h-4 sm:w-5 sm:h-5" /> Gönder</button>
             </form>
           </div>
         )}
@@ -227,9 +227,9 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                  <div className="p-2.5 bg-blue-100 rounded-xl text-blue-600"><DatabaseIcon className="w-5 h-5 sm:w-6 sm:h-6" /></div>
-                 <h3 className="text-lg sm:text-xl font-black text-zinc-900 uppercase">Bilgi Havuzu</h3>
+                 <h3 className="text-lg sm:text-xl font-extrabold text-zinc-900 tracking-tight">BİLGİ HAVUZU</h3>
               </div>
-              <button onClick={() => setShowAddSourceModal(true)} className="bg-[#198754] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-xl shadow-green-500/20 hover:bg-[#157347] transition-all uppercase tracking-widest">
+              <button onClick={() => setShowAddSourceModal(true)} className="bg-[#198754] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xl shadow-green-500/20 hover:bg-[#157347] transition-all uppercase tracking-wider">
                 <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Kaynak Ekle
               </button>
             </div>
@@ -241,18 +241,18 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                      <div className="w-12 h-12 sm:w-14 sm:h-14 bg-zinc-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-[#D63384] group-hover:bg-[#D63384] group-hover:text-white transition-all"><FileText className="w-6 h-6 sm:w-7 sm:h-7" /></div>
                      <button onClick={async () => { if(confirm("Bu kaynağı silmek istediğinizden emin misiniz?")) await deleteKnowledge(item.id, assistantId); loadAssistant(); }} className="p-2 text-zinc-300 hover:text-red-500 transition-colors"><Trash2 className="w-5 h-5" /></button>
                   </div>
-                  <div>
-                    <div className="font-black text-zinc-900 mb-2 truncate uppercase italic text-sm sm:text-base">{item.fileName}</div>
+                   <div>
+                    <div className="font-bold text-zinc-900 mb-1 truncate text-sm sm:text-base">{item.fileName}</div>
                     <div className="flex items-center gap-2">
-                       <span className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-500 text-[9px] font-black uppercase tracking-widest">{item.type}</span>
-                       <span className="text-[10px] text-zinc-400 font-bold italic">Yüklendi</span>
+                       <span className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-500 text-[9px] font-bold uppercase tracking-wider">{item.type}</span>
+                       <span className="text-[10px] text-zinc-400 font-medium italic">Yüklendi</span>
                     </div>
                   </div>
                 </div>
               )) : (
                 <div className="sm:col-span-2 lg:col-span-3 py-16 sm:py-20 text-center border-2 border-dashed border-zinc-100 rounded-2xl sm:rounded-[3rem] bg-zinc-50/50">
                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl sm:rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-sm"><Globe className="w-8 h-8 sm:w-10 sm:h-10 text-zinc-200" /></div>
-                   <h4 className="text-lg sm:text-xl font-black text-zinc-900 uppercase">Henüz Veri Yok</h4>
+                   <h4 className="text-lg sm:text-xl font-bold text-zinc-900">Henüz Veri Yok</h4>
                    <p className="text-zinc-500 text-sm font-medium px-4">Asistanınızı eğitmek için metin veya web sitesi ekleyin.</p>
                 </div>
               )}
@@ -263,30 +263,30 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         {activeTab === "settings" && (
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-10 pb-20 animate-in slide-in-from-bottom-2">
              <div className="space-y-6 sm:space-y-8 bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-zinc-100 shadow-sm overflow-hidden">
-                <h3 className="text-lg sm:text-xl font-black text-zinc-900 flex items-center gap-3 uppercase italic"><Settings className="w-5 h-5 sm:w-6 sm:h-6 text-[#6B2D5C]" /> Karakter & Kişilik</h3>
+                <h3 className="text-lg sm:text-xl font-extrabold text-zinc-900 flex items-center gap-3 tracking-tight uppercase"><Settings className="w-5 h-5 sm:w-6 sm:h-6 text-[#6B2D5C]" /> Karakter & Kişilik</h3>
                 <div className="space-y-5 sm:space-y-6">
                   <div>
-                    <label className="block text-[10px] sm:text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-2 sm:mb-3">Asistan İsmi</label>
+                    <label className="block text-[10px] sm:text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2 sm:mb-3">Asistan İsmi</label>
                     <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#6B2D5C] transition-all text-sm sm:text-base" value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} />
                   </div>
                   <div>
-                    <label className="block text-[10px] sm:text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-2 sm:mb-3">Karakter ve Kişilik (Prompt)</label>
+                    <label className="block text-[10px] sm:text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2 sm:mb-3">Karakter ve Kişilik (Prompt)</label>
                     <textarea rows={8} className="w-full bg-zinc-50 border border-zinc-200 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#6B2D5C] transition-all text-sm sm:text-base" value={editData.personality} onChange={(e) => setEditData({...editData, personality: e.target.value})} />
                   </div>
-                  <button onClick={handleUpdate} disabled={updating} className="w-full bg-[#6B2D5C] text-white py-4 sm:py-5 rounded-xl sm:rounded-[2rem] font-black text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-[#522246] transition-all shadow-xl shadow-purple-900/20 uppercase tracking-widest">
+                  <button onClick={handleUpdate} disabled={updating} className="w-full bg-[#6B2D5C] text-white py-4 sm:py-5 rounded-xl sm:rounded-[2rem] font-bold text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-[#522246] transition-all shadow-xl shadow-purple-900/20 uppercase tracking-wider">
                     {updating ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <Save className="w-5 h-5 sm:w-6 sm:h-6" />} Ayarları Güncelle
                   </button>
                 </div>
              </div>
 
              <div className="space-y-6 sm:space-y-8 bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-zinc-100 shadow-sm overflow-hidden flex flex-col h-[600px] xl:h-auto">
-                <h3 className="text-lg sm:text-xl font-black text-zinc-900 flex items-center gap-3 uppercase italic"><Palette className="w-5 h-5 sm:w-6 sm:h-6 text-[#D63384]" /> Görünüm & Şablonlar</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-zinc-900 flex items-center gap-3 uppercase"><Palette className="w-5 h-5 sm:w-6 sm:h-6 text-[#D63384]" /> Görünüm & Şablonlar</h3>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 overflow-y-auto pr-2 scrollbar-hide flex-1 pb-4">
                   {THEMES.map(t => (
                     <div key={t.id} onClick={() => setEditData({...editData, theme: t.id})} className={`p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-3 sm:gap-4 relative overflow-hidden group ${editData.theme === t.id ? "border-[#D63384] bg-pink-50" : "border-zinc-50 bg-zinc-50 hover:border-zinc-200"}`}>
                       <div className={`w-full h-12 sm:h-16 rounded-xl sm:rounded-2xl ${t.colors} flex items-center justify-center shadow-lg transition-transform group-hover:rotate-3 shrink-0`}>{t.icon}</div>
                       <div>
-                        <div className="text-[10px] sm:text-sm font-black text-zinc-900 uppercase italic leading-none mb-1 truncate">{t.name}</div>
+                        <div className="text-[10px] sm:text-sm font-bold text-zinc-900 uppercase leading-none mb-1 truncate">{t.name}</div>
                         <div className="text-[8px] sm:text-[10px] font-bold text-zinc-400 leading-tight line-clamp-2">{t.desc}</div>
                       </div>
                       {editData.theme === t.id && <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-[#D63384] text-white p-1 rounded-full"><Check className="w-2 h-2 sm:w-3 sm:h-3" /></div>}
@@ -304,12 +304,12 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                    <div className="flex items-center gap-4">
                       <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-blue-600 shrink-0"><Send className="w-6 h-6 sm:w-7 sm:h-7" /></div>
                       <div>
-                        <h3 className="text-xl sm:text-2xl font-black text-zinc-900 uppercase italic">Telegram Bot</h3>
-                        <p className="text-zinc-400 text-[10px] sm:text-sm font-bold uppercase tracking-widest mt-1 truncate">Asistanınızı Telegram'a Taşıyın</p>
+                        <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">TELEGRAM BOT</h3>
+                        <p className="text-zinc-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1 truncate">Asistanınızı Telegram'a Taşıyın</p>
                       </div>
                    </div>
                    <div className="flex items-center justify-between sm:justify-start gap-3 bg-zinc-50 p-2 rounded-xl sm:rounded-2xl border border-zinc-100">
-                      <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-3 ${editData.telegramEnabled ? "text-green-600" : "text-zinc-400"}`}>
+                      <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-3 ${editData.telegramEnabled ? "text-green-600" : "text-zinc-400"}`}>
                         {editData.telegramEnabled ? "Aktif" : "Devre Dışı"}
                       </span>
                       <button 
@@ -331,7 +331,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                    </div>
 
                    <div className="space-y-3 sm:space-y-4">
-                      <label className="block text-[10px] sm:text-xs font-black text-zinc-400 uppercase tracking-[0.2em] ml-2">Telegram Bot Token (HTTP API)</label>
+                      <label className="block text-[10px] sm:text-xs font-bold text-zinc-400 uppercase tracking-widest ml-2">Telegram Bot Token (HTTP API)</label>
                       <input 
                         type="text" 
                         placeholder="Örn: 123456:ABC..."
@@ -355,7 +355,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                       } finally { setUpdating(false); }
                     }}
                     disabled={updating}
-                    className="w-full bg-zinc-900 text-white py-4 sm:py-5 rounded-xl sm:rounded-[2rem] font-black text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl shadow-zinc-900/20 uppercase tracking-widest"
+                    className="w-full bg-zinc-900 text-white py-4 sm:py-5 rounded-xl sm:rounded-[2rem] font-bold text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl shadow-zinc-900/20 uppercase tracking-wider"
                    >
                      {updating ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <Check className="w-5 h-5 sm:w-6 sm:h-6" />} Ayarları Uygula
                    </button>
@@ -363,7 +363,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
              </div>
 
              <div className="p-6 border-2 border-dashed border-zinc-100 rounded-2xl sm:rounded-[3rem] text-center bg-zinc-50/30">
-                <p className="text-[9px] sm:text-[10px] text-zinc-400 font-black uppercase tracking-[0.3em]">Güvenli & İzole Altyapı</p>
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Güvenli & İzole Altyapı</p>
                 <p className="text-[11px] sm:text-xs text-zinc-400 mt-2 font-medium">Tüm Telegram trafiği uçtan uca şifreli olarak yönetilir.</p>
              </div>
           </div>
@@ -374,10 +374,10 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       {showShareModal && (
         <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
            <div className="bg-white rounded-3xl sm:rounded-[4rem] w-full max-w-xl p-6 sm:p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
-              <div className="flex items-center justify-between mb-8 sm:mb-10">
+               <div className="flex items-center justify-between mb-8 sm:mb-10">
                  <div className="flex items-center gap-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-pink-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-[#D63384]"><Share2 className="w-5 h-5 sm:w-6 sm:h-6" /></div>
-                    <h3 className="text-xl sm:text-3xl font-black text-zinc-900 uppercase italic">Link Paylaş</h3>
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">Link Paylaş</h3>
                  </div>
                  <button onClick={() => setShowShareModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
               </div>
@@ -387,7 +387,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                     <button onClick={() => {navigator.clipboard.writeText(shareUrl); toast.success("Kopyalandı!");}} className="bg-[#6B2D5C] text-white p-3 sm:px-6 rounded-xl sm:rounded-2xl hover:scale-105 transition-transform flex items-center justify-center"><Copy className="w-5 h-5" /></button>
                  </div>
               </div>
-              <a href={shareUrl} target="_blank" className="w-full py-4 sm:py-5 bg-[#D63384] rounded-xl sm:rounded-[2rem] text-white font-black text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-[#c22e77] transition-all shadow-xl shadow-pink-500/20 uppercase tracking-widest"><ExternalLink className="w-5 h-5" /> Test Et</a>
+               <a href={shareUrl} target="_blank" className="w-full py-4 sm:py-5 bg-[#D63384] rounded-xl sm:rounded-[2rem] text-white font-bold text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-[#c22e77] transition-all shadow-xl shadow-pink-500/20 uppercase tracking-wider"><ExternalLink className="w-5 h-5" /> Test Et</a>
            </div>
         </div>
       )}
@@ -396,10 +396,10 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       {showWidgetModal && (
         <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
            <div className="bg-white rounded-3xl sm:rounded-[4rem] w-full max-w-2xl p-6 sm:p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
-              <div className="flex items-center justify-between mb-8 sm:mb-10">
+               <div className="flex items-center justify-between mb-8 sm:mb-10">
                  <div className="flex items-center gap-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-[#6B2D5C]"><Code className="w-5 h-5 sm:w-6 h-6" /></div>
-                    <h3 className="text-xl sm:text-3xl font-black text-zinc-900 uppercase italic">Widget Kodu</h3>
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">Widget Kodu</h3>
                  </div>
                  <button onClick={() => setShowWidgetModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
               </div>
@@ -412,12 +412,12 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                       rows={5}
                       className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 text-[10px] sm:text-xs font-mono text-[#6B2D5C] font-bold focus:outline-none"
                     />
-                    <button 
-                      onClick={() => {navigator.clipboard.writeText(widgetCode); toast.success("Kod kopyalandı!");}}
-                      className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-[#6B2D5C] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:scale-105 transition-transform shadow-lg flex items-center gap-2 font-black text-[10px] sm:text-xs uppercase"
-                    >
-                      <Copy className="w-4 h-4" /> Kopyala
-                    </button>
+                     <button 
+                       onClick={() => {navigator.clipboard.writeText(widgetCode); toast.success("Kod kopyalandı!");}}
+                       className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-[#6B2D5C] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:scale-105 transition-transform shadow-lg flex items-center gap-2 font-bold text-[10px] sm:text-xs uppercase"
+                     >
+                       <Copy className="w-4 h-4" /> Kopyala
+                     </button>
                  </div>
               </div>
               <div className="p-4 sm:p-6 bg-yellow-50 rounded-2xl sm:rounded-3xl border border-yellow-100 flex gap-3 sm:gap-4">
@@ -432,15 +432,15 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       {showAddSourceModal && (
         <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
            <div className="bg-white rounded-3xl sm:rounded-[4rem] w-full max-w-2xl p-6 sm:p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
-              <div className="flex items-center justify-between mb-8 sm:mb-10">
-                 <h3 className="text-xl sm:text-3xl font-black text-zinc-900 uppercase italic flex items-center gap-3 sm:gap-4">
+               <div className="flex items-center justify-between mb-8 sm:mb-10">
+                 <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight flex items-center gap-3 sm:gap-4 uppercase">
                    <PlusCircle className="w-6 h-6 sm:w-8 sm:h-8 text-[#198754]" /> Veri Ekle
                  </h3>
                  <button onClick={() => setShowAddSourceModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 p-1.5 sm:p-2 bg-zinc-50 rounded-2xl sm:rounded-full mb-8 sm:mb-10 border border-zinc-100">
-                 <button onClick={() => setSourceType("TEXT")} className={`flex-1 py-3 sm:py-3.5 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all ${sourceType === "TEXT" ? "bg-white text-[#6B2D5C] shadow-sm border border-zinc-100" : "text-zinc-400"}`}>Manuel Metin</button>
-                 <button onClick={() => setSourceType("LINK")} className={`flex-1 py-3 sm:py-3.5 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all ${sourceType === "LINK" ? "bg-white text-[#6B2D5C] shadow-sm border border-zinc-100" : "text-zinc-400"}`}>Web Sitesi</button>
+                 <button onClick={() => setSourceType("TEXT")} className={`flex-1 py-3 sm:py-3.5 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${sourceType === "TEXT" ? "bg-white text-[#6B2D5C] shadow-sm border border-zinc-100" : "text-zinc-400"}`}>Manuel Metin</button>
+                 <button onClick={() => setSourceType("LINK")} className={`flex-1 py-3 sm:py-3.5 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${sourceType === "LINK" ? "bg-white text-[#6B2D5C] shadow-sm border border-zinc-100" : "text-zinc-400"}`}>Web Sitesi</button>
               </div>
               {sourceType === "TEXT" ? (
                  <textarea rows={8} placeholder="Metni buraya yapıştırın..." className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl sm:rounded-[2.5rem] p-5 sm:p-8 text-sm sm:text-base text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all mb-6 sm:mb-8" value={sourceContent} onChange={(e) => setSourceContent(e.target.value)} />
@@ -449,7 +449,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                     <input type="url" placeholder="https://example.com" className="w-full bg-zinc-50 border border-zinc-100 rounded-xl sm:rounded-full px-6 py-4 sm:px-8 sm:py-5 text-sm sm:text-base text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all" value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} />
                  </div>
               )}
-              <button onClick={handleAddSource} disabled={sourceLoading} className="w-full py-4 sm:py-5 bg-[#198754] text-white rounded-xl sm:rounded-[2rem] font-black text-lg sm:text-xl hover:bg-[#157347] transition-all shadow-xl shadow-green-500/20 flex items-center justify-center gap-3 uppercase tracking-widest">
+              <button onClick={handleAddSource} disabled={sourceLoading} className="w-full py-4 sm:py-5 bg-[#198754] text-white rounded-xl sm:rounded-[2rem] font-bold text-base sm:text-lg hover:bg-[#157347] transition-all shadow-xl shadow-green-500/20 flex items-center justify-center gap-3 uppercase tracking-wider">
                  {sourceLoading ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <Save className="w-5 h-5 sm:w-6 sm:h-6" />} Kaydet ve Eğit
               </button>
            </div>
