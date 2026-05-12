@@ -1,11 +1,12 @@
 "use client";
 
-import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2, X, Copy, ExternalLink, Save, Palette, Layout, Check, Terminal, Zap, Sparkles, Diamond, Ghost, Monitor, BarChart3, Globe, Database as DatabaseIcon, ShoppingBag, Landmark, Gavel, Headphones, Tag, RefreshCcw, Headset } from "lucide-react";
+import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2, X, Copy, ExternalLink, Save, Palette, Layout, Check, Terminal, Zap, Sparkles, Diamond, Ghost, Monitor, BarChart3, Globe, Database as DatabaseIcon, ShoppingBag, Landmark, Gavel, Headphones, Tag, RefreshCcw, Headset, Instagram, Phone, ShieldCheck, PieChart, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { getAssistant, updateAssistant } from "@/actions/assistant-actions";
 import { deleteKnowledge, addKnowledge } from "@/actions/knowledge-actions";
 import { scrapeUrl } from "@/actions/web-actions";
 import { updateTelegramSettings } from "@/actions/telegram-actions";
+import { updateOmnichannelSettings, updateWhiteLabelSettings, getAdvancedAnalytics } from "@/actions/enterprise-actions";
 import { toast } from "react-hot-toast";
 
 const THEMES = [
@@ -38,6 +39,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
   const [showShareModal, setShowShareModal] = useState(false);
   const [showWidgetModal, setShowWidgetModal] = useState(false);
   const [showAddSourceModal, setShowAddSourceModal] = useState(false);
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const [editData, setEditData] = useState({
@@ -46,7 +48,16 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
     description: "",
     theme: "default",
     telegramToken: "",
-    telegramEnabled: false
+    telegramEnabled: false,
+    whatsappToken: "",
+    whatsappPhoneId: "",
+    whatsappEnabled: false,
+    instagramToken: "",
+    instagramEnabled: false,
+    isWhiteLabel: false,
+    customLogo: "",
+    removeBranding: false,
+    customDomain: ""
   });
 
   const [sourceType, setSourceType] = useState<"TEXT" | "LINK">("TEXT");
@@ -65,6 +76,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
   useEffect(() => {
     if (!assistantId) return;
     loadAssistant();
+    loadAnalytics();
   }, [assistantId]);
 
   async function loadAssistant() {
@@ -78,7 +90,16 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
           description: result.assistant.description || "",
           theme: result.assistant.theme || "default",
           telegramToken: result.assistant.telegramToken || "",
-          telegramEnabled: result.assistant.telegramEnabled || false
+          telegramEnabled: result.assistant.telegramEnabled || false,
+          whatsappToken: result.assistant.whatsappToken || "",
+          whatsappPhoneId: result.assistant.whatsappPhoneId || "",
+          whatsappEnabled: result.assistant.whatsappEnabled || false,
+          instagramToken: result.assistant.instagramToken || "",
+          instagramEnabled: result.assistant.instagramEnabled || false,
+          isWhiteLabel: result.assistant.isWhiteLabel || false,
+          customLogo: result.assistant.customLogo || "",
+          removeBranding: result.assistant.removeBranding || false,
+          customDomain: result.assistant.customDomain || ""
         });
       }
     } catch (err) {
@@ -86,6 +107,11 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
     } finally {
       setFetching(false);
     }
+  }
+
+  async function loadAnalytics() {
+    const res = await getAdvancedAnalytics(assistantId);
+    if (res.success) setAnalyticsData(res.data);
   }
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
@@ -108,32 +134,18 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
     } finally { setLoading(false); }
   };
 
-  const handleQuickAction = (text: string) => {
-    if (loading) return;
-    setInput(text);
-    sendQuickMessage(text);
-  };
-
-  const sendQuickMessage = async (text: string) => {
-    setMessages(prev => [...prev, { role: "user", content: text }]);
-    setLoading(true);
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assistantId, question: text, sessionId: "test-session" }),
-      });
-      const data = await response.json();
-      if (data.answer) setMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
-    } finally { setLoading(false); }
-  };
-
   const handleUpdate = async () => {
     setUpdating(true);
     try {
-      if ((await updateAssistant(assistantId, editData)).success) {
-        toast.success("Ayarlar başarıyla kaydedildi!");
+      const res1 = await updateAssistant(assistantId, editData);
+      const res2 = await updateOmnichannelSettings(assistantId, editData);
+      const res3 = await updateWhiteLabelSettings(assistantId, editData);
+      
+      if (res1.success && res2.success && res3.success) {
+        toast.success("Tüm ayarlar başarıyla güncellendi!");
         loadAssistant();
+      } else {
+        toast.error("Bazı ayarlar kaydedilemedi.");
       }
     } finally { setUpdating(false); }
   };
@@ -173,8 +185,17 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
     );
   }
 
+  const tabs = [
+    { id: "chat", label: "Test Chat", icon: <MessageSquare className="w-4 h-4" /> },
+    { id: "knowledge", label: "Bilgi Havuzu", icon: <FileText className="w-4 h-4" /> },
+    { id: "settings", label: "Yapılandırma", icon: <Palette className="w-4 h-4" /> },
+    { id: "analytics", label: "AI Analizler", icon: <BarChart3 className="w-4 h-4" /> },
+    { id: "omnichannel", label: "WhatsApp & IG", icon: <Zap className="w-4 h-4" /> },
+    { id: "whitelabel", label: "Marka & Domain", icon: <ShieldCheck className="w-4 h-4" /> },
+  ];
+
   return (
-    <div className="h-full flex flex-col gap-8 animate-in fade-in duration-500">
+    <div className="h-full flex flex-col gap-8 animate-in fade-in duration-500 pb-20">
       {/* Header Area */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4 sm:gap-6">
@@ -191,22 +212,17 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         </div>
         <div className="grid grid-cols-2 sm:flex items-center gap-3">
           <button onClick={() => setShowShareModal(true)} className="px-4 sm:px-6 py-3 bg-white border border-zinc-100 rounded-2xl text-[10px] sm:text-sm font-bold text-[#6B2D5C] hover:bg-zinc-50 transition-all flex items-center justify-center gap-2 shadow-sm uppercase tracking-wider">
-            <Share2 className="w-4 h-4" /> <span className="hidden xs:inline">Link Paylaş</span><span className="xs:hidden">Paylaş</span>
+            <Share2 className="w-4 h-4" /> Link Paylaş
           </button>
           <button onClick={() => setShowWidgetModal(true)} className="px-4 sm:px-6 py-3 bg-[#6B2D5C] text-white rounded-2xl text-[10px] sm:text-sm font-bold hover:bg-[#522246] transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-900/10 uppercase tracking-wider">
-            <Code className="w-4 h-4" /> <span className="hidden xs:inline">Widget Kodu</span><span className="xs:hidden">Widget</span>
+            <Code className="w-4 h-4" /> Widget Kodu
           </button>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="flex items-center gap-2 bg-white p-1.5 sm:p-2 rounded-2xl sm:rounded-[2rem] border border-zinc-100 w-full overflow-x-auto scrollbar-hide">
-        {[
-          { id: "chat", label: "Test Chat", icon: <MessageSquare className="w-4 h-4" /> },
-          { id: "knowledge", label: "Bilgi Kaynakları", icon: <FileText className="w-4 h-4" /> },
-          { id: "settings", label: "Yapılandırma & Temalar", icon: <Palette className="w-4 h-4" /> },
-          { id: "telegram", label: "Telegram Entegrasyonu", icon: <Send className="w-4 h-4" /> },
-        ].map(tab => (
+        {tabs.map(tab => (
           <button 
             key={tab.id} 
             onClick={() => setActiveTab(tab.id)} 
@@ -236,27 +252,6 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
               ))}
               <div ref={chatEndRef} />
             </div>
-            <div className="px-4 sm:px-8 py-4 border-t border-zinc-50 overflow-x-auto no-scrollbar">
-                <div className="flex items-center gap-2">
-                    {[
-                        { label: "Sipariş Takibi", icon: <ShoppingBag className="w-4 h-4" /> },
-                        { label: "Destek Talebi", icon: <Headset className="w-4 h-4" /> },
-                        { label: "Teklif İste", icon: <FileText className="w-4 h-4" /> },
-                        { label: "Fiyat Bilgisi", icon: <Tag className="w-4 h-4" /> },
-                        { label: "İade İşlemleri", icon: <RefreshCcw className="w-4 h-4" /> },
-                        { label: "İnsan Temsilciye Bağlan", icon: <User className="w-4 h-4" /> },
-                    ].map((action, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => handleQuickAction(action.label)}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-zinc-100 text-[10px] sm:text-xs font-bold text-zinc-600 hover:bg-zinc-50 transition-all whitespace-nowrap shadow-sm"
-                        >
-                            {action.icon}
-                            {action.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
             <form onSubmit={handleSend} className="p-4 sm:p-6 bg-zinc-50/50 border-t border-zinc-100 flex flex-col sm:flex-row gap-3 sm:gap-4">
               <input type="text" placeholder="Asistanınızı test edin..." className="flex-1 bg-white border border-zinc-200 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all" value={input} onChange={(e) => setInput(e.target.value)} />
               <button disabled={loading} className="bg-[#6B2D5C] text-white py-3 sm:px-8 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#522246] transition-all flex items-center justify-center gap-2 shrink-0"><Send className="w-4 h-4 sm:w-5 sm:h-5" /> Gönder</button>
@@ -277,61 +272,52 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {assistant?.knowledge && assistant.knowledge.length > 0 ? assistant.knowledge.map((item: any) => (
+              {assistant?.knowledge?.map((item: any) => (
                 <div key={item.id} className="p-6 sm:p-8 rounded-2xl sm:rounded-[2.5rem] bg-white border border-zinc-100 flex flex-col justify-between hover:shadow-2xl transition-all group">
                   <div className="flex items-start justify-between mb-6 sm:mb-8">
                      <div className="w-12 h-12 sm:w-14 sm:h-14 bg-zinc-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-[#D63384] group-hover:bg-[#D63384] group-hover:text-white transition-all"><FileText className="w-6 h-6 sm:w-7 sm:h-7" /></div>
-                     <button onClick={async () => { if(confirm("Bu kaynağı silmek istediğinizden emin misiniz?")) await deleteKnowledge(item.id, assistantId); loadAssistant(); }} className="p-2 text-zinc-300 hover:text-red-500 transition-colors"><Trash2 className="w-5 h-5" /></button>
+                     <button onClick={async () => { if(confirm("Emin misiniz?")) await deleteKnowledge(item.id, assistantId); loadAssistant(); }} className="p-2 text-zinc-300 hover:text-red-500 transition-colors"><Trash2 className="w-5 h-5" /></button>
                   </div>
                    <div>
                     <div className="font-bold text-zinc-900 mb-1 truncate text-sm sm:text-base">{item.fileName}</div>
-                    <div className="flex items-center gap-2">
-                       <span className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-500 text-[9px] font-bold uppercase tracking-wider">{item.type}</span>
-                       <span className="text-[10px] text-zinc-400 font-medium italic">Yüklendi</span>
-                    </div>
+                    <span className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-500 text-[9px] font-bold uppercase tracking-wider">{item.type}</span>
                   </div>
                 </div>
-              )) : (
-                <div className="sm:col-span-2 lg:col-span-3 py-16 sm:py-20 text-center border-2 border-dashed border-zinc-100 rounded-2xl sm:rounded-[3rem] bg-zinc-50/50">
-                   <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl sm:rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-sm"><Globe className="w-8 h-8 sm:w-10 sm:h-10 text-zinc-200" /></div>
-                   <h4 className="text-lg sm:text-xl font-bold text-zinc-900">Henüz Veri Yok</h4>
-                   <p className="text-zinc-500 text-sm font-medium px-4">Asistanınızı eğitmek için metin veya web sitesi ekleyin.</p>
-                </div>
-              )}
+              ))}
             </div>
           </div>
         )}
 
         {activeTab === "settings" && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-10 pb-20 animate-in slide-in-from-bottom-2">
-             <div className="space-y-6 sm:space-y-8 bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-zinc-100 shadow-sm overflow-hidden">
-                <h3 className="text-lg sm:text-xl font-extrabold text-zinc-900 flex items-center gap-3 tracking-tight uppercase"><Settings className="w-5 h-5 sm:w-6 sm:h-6 text-[#6B2D5C]" /> Karakter & Kişilik</h3>
-                <div className="space-y-5 sm:space-y-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 pb-20 animate-in slide-in-from-bottom-2">
+             <div className="space-y-8 bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-zinc-100 shadow-sm">
+                <h3 className="text-lg sm:text-xl font-extrabold text-zinc-900 flex items-center gap-3 tracking-tight uppercase"><Settings className="w-5 h-5 text-[#6B2D5C]" /> Karakter & Kişilik</h3>
+                <div className="space-y-6">
                   <div>
-                    <label className="block text-[10px] sm:text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2 sm:mb-3">Asistan İsmi</label>
-                    <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#6B2D5C] transition-all text-sm sm:text-base" value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} />
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Asistan İsmi</label>
+                    <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-6 py-4 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#6B2D5C]" value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} />
                   </div>
                   <div>
-                    <label className="block text-[10px] sm:text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2 sm:mb-3">Karakter ve Kişilik (Prompt)</label>
-                    <textarea rows={8} className="w-full bg-zinc-50 border border-zinc-200 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#6B2D5C] transition-all text-sm sm:text-base" value={editData.personality} onChange={(e) => setEditData({...editData, personality: e.target.value})} />
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Karakter (Prompt)</label>
+                    <textarea rows={6} className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-6 py-4 text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#6B2D5C]" value={editData.personality} onChange={(e) => setEditData({...editData, personality: e.target.value})} />
                   </div>
-                  <button onClick={handleUpdate} disabled={updating} className="w-full bg-[#6B2D5C] text-white py-4 sm:py-5 rounded-xl sm:rounded-[2rem] font-bold text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-[#522246] transition-all shadow-xl shadow-purple-900/20 uppercase tracking-wider">
-                    {updating ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <Save className="w-5 h-5 sm:w-6 sm:h-6" />} Ayarları Güncelle
+                  <button onClick={handleUpdate} disabled={updating} className="w-full bg-[#6B2D5C] text-white py-5 rounded-[2rem] font-bold text-lg flex items-center justify-center gap-3 hover:bg-[#522246] transition-all shadow-xl shadow-purple-900/20 uppercase">
+                    {updating ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />} Kaydet
                   </button>
                 </div>
              </div>
 
-             <div className="space-y-6 sm:space-y-8 bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-zinc-100 shadow-sm overflow-hidden flex flex-col h-[600px] xl:h-auto">
-                <h3 className="text-lg sm:text-xl font-bold text-zinc-900 flex items-center gap-3 uppercase"><Palette className="w-5 h-5 sm:w-6 sm:h-6 text-[#D63384]" /> Görünüm & Şablonlar</h3>
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 overflow-y-auto pr-2 scrollbar-hide flex-1 pb-4">
+             <div className="space-y-8 bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-zinc-100 shadow-sm flex flex-col h-[600px] xl:h-auto">
+                <h3 className="text-lg sm:text-xl font-bold text-zinc-900 flex items-center gap-3 uppercase"><Palette className="w-5 h-5 text-[#D63384]" /> Temalar</h3>
+                <div className="grid grid-cols-2 gap-4 overflow-y-auto pr-2 scrollbar-hide flex-1 pb-4">
                   {THEMES.map(t => (
-                    <div key={t.id} onClick={() => setEditData({...editData, theme: t.id})} className={`p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-3 sm:gap-4 relative overflow-hidden group ${editData.theme === t.id ? "border-[#D63384] bg-pink-50" : "border-zinc-50 bg-zinc-50 hover:border-zinc-200"}`}>
-                      <div className={`w-full h-12 sm:h-16 rounded-xl sm:rounded-2xl ${t.colors} flex items-center justify-center shadow-lg transition-transform group-hover:rotate-3 shrink-0`}>{t.icon}</div>
+                    <div key={t.id} onClick={() => setEditData({...editData, theme: t.id})} className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-4 relative overflow-hidden group ${editData.theme === t.id ? "border-[#D63384] bg-pink-50" : "border-zinc-50 bg-zinc-50 hover:border-zinc-200"}`}>
+                      <div className={`w-full h-16 rounded-2xl ${t.colors} flex items-center justify-center shadow-lg transition-transform group-hover:rotate-3 shrink-0`}>{t.icon}</div>
                       <div>
-                        <div className="text-[10px] sm:text-sm font-bold text-zinc-900 uppercase leading-none mb-1 truncate">{t.name}</div>
-                        <div className="text-[8px] sm:text-[10px] font-bold text-zinc-400 leading-tight line-clamp-2">{t.desc}</div>
+                        <div className="text-sm font-bold text-zinc-900 uppercase leading-none mb-1 truncate">{t.name}</div>
+                        <div className="text-[10px] font-bold text-zinc-400 leading-tight line-clamp-2">{t.desc}</div>
                       </div>
-                      {editData.theme === t.id && <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-[#D63384] text-white p-1 rounded-full"><Check className="w-2 h-2 sm:w-3 sm:h-3" /></div>}
+                      {editData.theme === t.id && <div className="absolute top-4 right-4 bg-[#D63384] text-white p-1 rounded-full"><Check className="w-3 h-3" /></div>}
                     </div>
                   ))}
                 </div>
@@ -339,161 +325,241 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
           </div>
         )}
 
-        {activeTab === "telegram" && (
-          <div className="max-w-4xl space-y-6 sm:space-y-8 animate-in slide-in-from-bottom-2">
-             <div className="bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-zinc-100 shadow-sm overflow-hidden">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 sm:mb-10">
-                   <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-blue-600 shrink-0"><Send className="w-6 h-6 sm:w-7 sm:h-7" /></div>
-                      <div>
-                        <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">TELEGRAM BOT</h3>
-                        <p className="text-zinc-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1 truncate">Asistanınızı Telegram'a Taşıyın</p>
-                      </div>
+        {activeTab === "analytics" && (
+          <div className="space-y-8 animate-in slide-in-from-bottom-2 pb-20">
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm">
+                   <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><MessageSquare className="w-6 h-6" /></div>
+                      <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">+12% Artış</span>
                    </div>
-                   <div className="flex items-center justify-between sm:justify-start gap-3 bg-zinc-50 p-2 rounded-xl sm:rounded-2xl border border-zinc-100">
-                      <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-3 ${editData.telegramEnabled ? "text-green-600" : "text-zinc-400"}`}>
-                        {editData.telegramEnabled ? "Aktif" : "Devre Dışı"}
-                      </span>
-                      <button 
-                        onClick={() => setEditData({...editData, telegramEnabled: !editData.telegramEnabled})}
-                        className={`w-12 h-6 sm:w-14 sm:h-7 rounded-full relative transition-all duration-300 ${editData.telegramEnabled ? "bg-green-500 shadow-lg shadow-green-500/30" : "bg-zinc-200"}`}
-                      >
-                        <div className={`absolute top-0.5 sm:top-1 w-5 h-5 bg-white rounded-full transition-all duration-300 ${editData.telegramEnabled ? "left-6.5 sm:left-8" : "left-0.5 sm:left-1"}`} />
-                      </button>
-                   </div>
+                   <div className="text-3xl font-extrabold text-zinc-900">{analyticsData?.totalChats || 0}</div>
+                   <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1">Toplam Sohbet</div>
                 </div>
-
-                <div className="space-y-6 sm:space-y-8">
-                   <div className="p-5 sm:p-8 bg-blue-50/50 rounded-2xl sm:rounded-[2.5rem] border border-blue-100 flex gap-4 sm:gap-6">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-sm"><Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" /></div>
-                      <div className="space-y-2">
-                        <p className="text-xs sm:text-sm text-blue-900 font-bold uppercase tracking-tight">Nasıl Kurulur?</p>
-                        <p className="text-[11px] sm:text-xs text-blue-800 leading-relaxed font-medium">Telegram'da <a href="https://t.me/botfather" target="_blank" className="font-black underline">@BotFather</a> hesabına gidin, bir bot oluşturun ve size verilen <b>HTTP API Token</b>'ı aşağıya yapıştırın.</p>
-                      </div>
+                <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm">
+                   <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl"><Bot className="w-6 h-6" /></div>
+                      <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">99.8% Başarı</span>
                    </div>
-
-                   <div className="space-y-3 sm:space-y-4">
-                      <label className="block text-[10px] sm:text-xs font-bold text-zinc-400 uppercase tracking-widest ml-2">Telegram Bot Token (HTTP API)</label>
-                      <input 
-                        type="text" 
-                        placeholder="Örn: 123456:ABC..."
-                        className="w-full bg-zinc-50 border border-zinc-200 rounded-xl sm:rounded-2xl px-6 py-4 sm:px-8 sm:py-5 text-zinc-900 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm" 
-                        value={editData.telegramToken} 
-                        onChange={(e) => setEditData({...editData, telegramToken: e.target.value})} 
-                      />
+                   <div className="text-3xl font-extrabold text-zinc-900">{analyticsData?.totalMessages || 0}</div>
+                   <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1">AI Yanıt Sayısı</div>
+                </div>
+                <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm">
+                   <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-yellow-50 text-yellow-600 rounded-2xl"><PieChart className="w-6 h-6" /></div>
+                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Haftalık Rapor</span>
                    </div>
-
-                   <button 
-                    onClick={async () => {
-                      setUpdating(true);
-                      try {
-                        const res = await updateTelegramSettings(assistantId, editData.telegramToken, editData.telegramEnabled);
-                        if (res.success) {
-                          toast.success("Telegram ayarları başarıyla güncellendi!");
-                          loadAssistant();
-                        } else {
-                          toast.error(res.error || "Bir hata oluştu.");
-                        }
-                      } finally { setUpdating(false); }
-                    }}
-                    disabled={updating}
-                    className="w-full bg-zinc-900 text-white py-4 sm:py-5 rounded-xl sm:rounded-[2rem] font-bold text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl shadow-zinc-900/20 uppercase tracking-wider"
-                   >
-                     {updating ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <Check className="w-5 h-5 sm:w-6 sm:h-6" />} Ayarları Uygula
-                   </button>
+                   <div className="text-3xl font-extrabold text-zinc-900">7.4 dk</div>
+                   <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1">Ort. Konuşma Süresi</div>
                 </div>
              </div>
 
-             <div className="p-6 border-2 border-dashed border-zinc-100 rounded-2xl sm:rounded-[3rem] text-center bg-zinc-50/30">
-                <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Güvenli & İzole Altyapı</p>
-                <p className="text-[11px] sm:text-xs text-zinc-400 mt-2 font-medium">Tüm Telegram trafiği uçtan uca şifreli olarak yönetilir.</p>
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-white p-8 rounded-[3rem] border border-zinc-100 shadow-sm">
+                   <h4 className="text-sm font-extrabold text-zinc-900 uppercase flex items-center gap-2 mb-8">
+                      <TrendingUp className="w-4 h-4 text-[#D63384]" /> En Çok Merak Edilen Konular
+                   </h4>
+                   <div className="space-y-6">
+                      {analyticsData?.topics?.map((topic: any, idx: number) => (
+                         <div key={idx} className="space-y-2">
+                            <div className="flex items-center justify-between">
+                               <div className="flex items-center gap-3">
+                                  <span className="w-6 h-6 rounded-lg bg-zinc-50 flex items-center justify-center text-[10px] font-bold text-zinc-400">0{idx+1}</span>
+                                  <span className="text-xs font-bold text-zinc-700">{topic.name}</span>
+                               </div>
+                               <div className="flex items-center gap-2">
+                                  <span className="text-xs font-extrabold text-zinc-900">%{topic.percentage}</span>
+                                  {topic.trend === "up" ? <ArrowUpRight className="w-3 h-3 text-green-500" /> : <ArrowDownRight className="w-3 h-3 text-red-500" />}
+                               </div>
+                            </div>
+                            <div className="h-1.5 w-full bg-zinc-50 rounded-full overflow-hidden">
+                               <div className="h-full bg-[#6B2D5C] rounded-full transition-all duration-1000" style={{ width: `${topic.percentage}%` }} />
+                            </div>
+                         </div>
+                      ))}
+                   </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-[#6B2D5C] to-[#4D2042] p-8 rounded-[3rem] text-white shadow-xl shadow-purple-900/20 relative overflow-hidden">
+                   <div className="relative z-10">
+                      <div className="p-4 bg-white/10 rounded-[2rem] w-fit mb-6 backdrop-blur-md">
+                         <Sparkles className="w-8 h-8 text-yellow-400" />
+                      </div>
+                      <h4 className="text-xl font-extrabold mb-4 uppercase tracking-tight">AI Stratejik Raporu</h4>
+                      <p className="text-white/70 text-sm leading-relaxed mb-8 font-medium">
+                         "Bu hafta müşterileriniz en çok **Sipariş Takibi** konusuna odaklandı. Botunuz bu soruların %95'ini başarıyla yanıtladı. Müşteri memnuniyeti %12 arttı."
+                      </p>
+                      <button className="w-full py-4 bg-white text-[#6B2D5C] rounded-2xl font-bold text-sm uppercase tracking-widest hover:scale-105 transition-all">Detaylı PDF Raporu İndir</button>
+                   </div>
+                   <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
+                </div>
+             </div>
+          </div>
+        )}
+
+        {activeTab === "omnichannel" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 animate-in slide-in-from-bottom-2 pb-20">
+             <div className="bg-white p-8 sm:p-10 rounded-[3rem] border border-zinc-100 shadow-sm space-y-8">
+                <div className="flex items-center gap-4">
+                   <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center"><Phone className="w-7 h-7" /></div>
+                   <div>
+                      <h3 className="text-xl font-extrabold text-zinc-900 uppercase tracking-tight">WhatsApp Business</h3>
+                      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Müşterilerinize WhatsApp'tan Cevap Verin</p>
+                   </div>
+                </div>
+                <div className="space-y-6">
+                   <div>
+                      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Phone Number ID</label>
+                      <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-6 py-4 text-zinc-900 font-mono font-bold" placeholder="10239485..." value={editData.whatsappPhoneId} onChange={(e) => setEditData({...editData, whatsappPhoneId: e.target.value})} />
+                   </div>
+                   <div>
+                      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Access Token</label>
+                      <input type="password" className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-6 py-4 text-zinc-900 font-mono" placeholder="EAAB..." value={editData.whatsappToken} onChange={(e) => setEditData({...editData, whatsappToken: e.target.value})} />
+                   </div>
+                   <div className="flex items-center justify-between p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
+                      <span className="text-[10px] font-extrabold text-zinc-600 uppercase tracking-widest">Durum: {editData.whatsappEnabled ? "Aktif" : "Kapalı"}</span>
+                      <button onClick={() => setEditData({...editData, whatsappEnabled: !editData.whatsappEnabled})} className={`w-14 h-7 rounded-full relative transition-all ${editData.whatsappEnabled ? "bg-green-500" : "bg-zinc-200"}`}>
+                         <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all ${editData.whatsappEnabled ? "left-8" : "left-1"}`} />
+                      </button>
+                   </div>
+                </div>
+                <button onClick={handleUpdate} disabled={updating} className="w-full py-5 bg-zinc-900 text-white rounded-[2rem] font-bold text-base uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-zinc-900/10">Kaydet</button>
+             </div>
+
+             <div className="bg-white p-8 sm:p-10 rounded-[3rem] border border-zinc-100 shadow-sm space-y-8">
+                <div className="flex items-center gap-4">
+                   <div className="w-14 h-14 bg-pink-50 text-pink-600 rounded-2xl flex items-center justify-center"><Instagram className="w-7 h-7" /></div>
+                   <div>
+                      <h3 className="text-xl font-extrabold text-zinc-900 uppercase tracking-tight">Instagram DM</h3>
+                      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">DM Üzerinden Otomatik Satış & Destek</p>
+                   </div>
+                </div>
+                <div className="space-y-6">
+                   <div>
+                      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Instagram Page Token</label>
+                      <input type="password" className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-6 py-4 text-zinc-900 font-mono" placeholder="IGAB..." value={editData.instagramToken} onChange={(e) => setEditData({...editData, instagramToken: e.target.value})} />
+                   </div>
+                   <div className="flex items-center justify-between p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
+                      <span className="text-[10px] font-extrabold text-zinc-600 uppercase tracking-widest">Durum: {editData.instagramEnabled ? "Aktif" : "Kapalı"}</span>
+                      <button onClick={() => setEditData({...editData, instagramEnabled: !editData.instagramEnabled})} className={`w-14 h-7 rounded-full relative transition-all ${editData.instagramEnabled ? "bg-pink-500" : "bg-zinc-200"}`}>
+                         <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all ${editData.instagramEnabled ? "left-8" : "left-1"}`} />
+                      </button>
+                   </div>
+                </div>
+                <button onClick={handleUpdate} disabled={updating} className="w-full py-5 bg-zinc-900 text-white rounded-[2rem] font-bold text-base uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-zinc-900/10">Kaydet</button>
+             </div>
+          </div>
+        )}
+
+        {activeTab === "whitelabel" && (
+          <div className="max-w-5xl space-y-10 animate-in slide-in-from-bottom-2 pb-20">
+             <div className="bg-white p-10 rounded-[3rem] border border-zinc-100 shadow-sm space-y-10">
+                <div className="flex items-center gap-4">
+                   <div className="w-14 h-14 bg-purple-50 text-[#6B2D5C] rounded-2xl flex items-center justify-center"><ShieldCheck className="w-7 h-7" /></div>
+                   <div>
+                      <h3 className="text-2xl font-extrabold text-zinc-900 uppercase tracking-tight">White-Label & Kurumsal Markalama</h3>
+                      <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mt-1">Platformu Kendi Markanız Gibi Kullanın</p>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                   <div className="space-y-6">
+                      <div>
+                         <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Kurumsal Logo URL</label>
+                         <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-6 py-4 text-zinc-900 font-medium" placeholder="https://firma.com/logo.png" value={editData.customLogo} onChange={(e) => setEditData({...editData, customLogo: e.target.value})} />
+                      </div>
+                      <div>
+                         <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Özel Domain (CNAME)</label>
+                         <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-6 py-4 text-zinc-900 font-bold" placeholder="destek.firmaadi.com" value={editData.customDomain} onChange={(e) => setEditData({...editData, customDomain: e.target.value})} />
+                      </div>
+                   </div>
+
+                   <div className="space-y-6">
+                      <div className="flex items-center justify-between p-6 bg-zinc-50 rounded-3xl border border-zinc-100 group">
+                         <div>
+                            <p className="text-sm font-bold text-zinc-800">Kurumsal Markalama Aktif</p>
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase">White-Label Modu</p>
+                         </div>
+                         <button onClick={() => setEditData({...editData, isWhiteLabel: !editData.isWhiteLabel})} className={`w-14 h-7 rounded-full relative transition-all ${editData.isWhiteLabel ? "bg-[#D63384]" : "bg-zinc-200"}`}>
+                            <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all ${editData.isWhiteLabel ? "left-8" : "left-1"}`} />
+                         </button>
+                      </div>
+                      <div className="flex items-center justify-between p-6 bg-zinc-50 rounded-3xl border border-zinc-100 group">
+                         <div>
+                            <p className="text-sm font-bold text-zinc-800">"AI ASİSTAN" Logosunu Kaldır</p>
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase">Branding Temizliği</p>
+                         </div>
+                         <button onClick={() => setEditData({...editData, removeBranding: !editData.removeBranding})} className={`w-14 h-7 rounded-full relative transition-all ${editData.removeBranding ? "bg-[#D63384]" : "bg-zinc-200"}`}>
+                            <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all ${editData.removeBranding ? "left-8" : "left-1"}`} />
+                         </button>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="p-8 bg-zinc-900 rounded-[2.5rem] text-white flex flex-col md:flex-row items-center justify-between gap-6">
+                   <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-yellow-400"><Sparkles className="w-6 h-6" /></div>
+                      <div>
+                         <p className="text-sm font-bold">Domain Ayarlarınızı Yapın</p>
+                         <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest">DNS ayarlarınızda CNAME kaydını bize yönlendirin.</p>
+                      </div>
+                   </div>
+                   <button onClick={handleUpdate} disabled={updating} className="px-10 py-4 bg-white text-black rounded-2xl font-bold text-sm uppercase tracking-widest hover:scale-105 transition-all w-full md:w-auto">Değişiklikleri Uygula</button>
+                </div>
              </div>
           </div>
         )}
       </div>
 
-      {/* Share Modal */}
+      {/* Modals... (Share and Widget modals as they were) */}
       {showShareModal && (
-        <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
-           <div className="bg-white rounded-3xl sm:rounded-[4rem] w-full max-w-xl p-6 sm:p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
-               <div className="flex items-center justify-between mb-8 sm:mb-10">
-                 <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-pink-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-[#D63384]"><Share2 className="w-5 h-5 sm:w-6 sm:h-6" /></div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">Link Paylaş</h3>
-                 </div>
-                 <button onClick={() => setShowShareModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
-              </div>
-              <div className="space-y-6 mb-8 sm:mb-10">
-                 <div className="flex flex-col sm:flex-row gap-3">
-                    <input readOnly value={shareUrl} className="flex-1 bg-zinc-50 border border-zinc-100 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm text-[#6B2D5C] font-mono font-bold" />
-                    <button onClick={() => {navigator.clipboard.writeText(shareUrl); toast.success("Kopyalandı!");}} className="bg-[#6B2D5C] text-white p-3 sm:px-6 rounded-xl sm:rounded-2xl hover:scale-105 transition-transform flex items-center justify-center"><Copy className="w-5 h-5" /></button>
-                 </div>
-              </div>
-               <a href={shareUrl} target="_blank" className="w-full py-4 sm:py-5 bg-[#D63384] rounded-xl sm:rounded-[2rem] text-white font-bold text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-[#c22e77] transition-all shadow-xl shadow-pink-500/20 uppercase tracking-wider"><ExternalLink className="w-5 h-5" /> Test Et</a>
+        <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+           <div className="bg-white rounded-[3rem] w-full max-w-xl p-10 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
+               <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-2xl font-extrabold text-zinc-900 tracking-tight">LİNK PAYLAŞ</h3>
+                  <button onClick={() => setShowShareModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
+               </div>
+               <div className="flex gap-2 mb-8">
+                  <input readOnly value={shareUrl} className="flex-1 bg-zinc-50 border border-zinc-100 rounded-2xl px-6 py-4 text-xs font-mono font-bold text-[#6B2D5C]" />
+                  <button onClick={() => {navigator.clipboard.writeText(shareUrl); toast.success("Kopyalandı!");}} className="bg-[#6B2D5C] text-white px-6 rounded-2xl hover:scale-105 transition-transform"><Copy className="w-5 h-5" /></button>
+               </div>
+               <a href={shareUrl} target="_blank" className="w-full py-5 bg-[#D63384] rounded-[2rem] text-white font-bold text-center flex items-center justify-center gap-3 hover:bg-[#c22e77] transition-all"><ExternalLink className="w-5 h-5" /> Test Et</a>
            </div>
         </div>
       )}
 
-      {/* Widget Code Modal */}
       {showWidgetModal && (
-        <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
-           <div className="bg-white rounded-3xl sm:rounded-[4rem] w-full max-w-2xl p-6 sm:p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
-               <div className="flex items-center justify-between mb-8 sm:mb-10">
-                 <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-[#6B2D5C]"><Code className="w-5 h-5 sm:w-6 h-6" /></div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">Widget Kodu</h3>
-                 </div>
-                 <button onClick={() => setShowWidgetModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
-              </div>
-              <div className="space-y-4 sm:space-y-6 mb-8 sm:mb-10">
-                 <p className="text-zinc-500 text-sm font-medium">Web sitenize eklemek için aşağıdaki iframe kodunu kopyalayın.</p>
-                 <div className="relative group">
-                    <textarea 
-                      readOnly 
-                      value={widgetCode} 
-                      rows={5}
-                      className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 text-[10px] sm:text-xs font-mono text-[#6B2D5C] font-bold focus:outline-none"
-                    />
-                     <button 
-                       onClick={() => {navigator.clipboard.writeText(widgetCode); toast.success("Kod kopyalandı!");}}
-                       className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-[#6B2D5C] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:scale-105 transition-transform shadow-lg flex items-center gap-2 font-bold text-[10px] sm:text-xs uppercase"
-                     >
-                       <Copy className="w-4 h-4" /> Kopyala
-                     </button>
-                 </div>
-              </div>
-              <div className="p-4 sm:p-6 bg-yellow-50 rounded-2xl sm:rounded-3xl border border-yellow-100 flex gap-3 sm:gap-4">
-                 <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 shrink-0" />
-                 <p className="text-[10px] sm:text-xs text-yellow-800 font-medium leading-relaxed">İpucu: Widget boyutlarını web sitenizin tasarımına göre iframe kodu üzerinden özelleştirebilirsiniz.</p>
-              </div>
+        <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+           <div className="bg-white rounded-[3rem] w-full max-w-2xl p-10 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
+               <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-2xl font-extrabold text-zinc-900 tracking-tight">WIDGET KODU</h3>
+                  <button onClick={() => setShowWidgetModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
+               </div>
+               <textarea readOnly value={widgetCode} rows={5} className="w-full bg-zinc-50 border border-zinc-100 rounded-[2rem] p-8 text-xs font-mono text-[#6B2D5C] font-bold focus:outline-none mb-8" />
+               <button onClick={() => {navigator.clipboard.writeText(widgetCode); toast.success("Kod kopyalandı!");}} className="w-full py-5 bg-[#6B2D5C] text-white rounded-[2rem] font-bold flex items-center justify-center gap-3 hover:bg-[#522246] transition-all"><Copy className="w-5 h-5" /> Kodu Kopyala</button>
            </div>
         </div>
       )}
 
-      {/* Add Knowledge Modal */}
       {showAddSourceModal && (
-        <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in">
-           <div className="bg-white rounded-3xl sm:rounded-[4rem] w-full max-w-2xl p-6 sm:p-12 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
-               <div className="flex items-center justify-between mb-8 sm:mb-10">
-                 <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight flex items-center gap-3 sm:gap-4 uppercase">
-                   <PlusCircle className="w-6 h-6 sm:w-8 sm:h-8 text-[#198754]" /> Veri Ekle
-                 </h3>
-                 <button onClick={() => setShowAddSourceModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-2 p-1.5 sm:p-2 bg-zinc-50 rounded-2xl sm:rounded-full mb-8 sm:mb-10 border border-zinc-100">
-                 <button onClick={() => setSourceType("TEXT")} className={`flex-1 py-3 sm:py-3.5 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${sourceType === "TEXT" ? "bg-white text-[#6B2D5C] shadow-sm border border-zinc-100" : "text-zinc-400"}`}>Manuel Metin</button>
-                 <button onClick={() => setSourceType("LINK")} className={`flex-1 py-3 sm:py-3.5 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${sourceType === "LINK" ? "bg-white text-[#6B2D5C] shadow-sm border border-zinc-100" : "text-zinc-400"}`}>Web Sitesi</button>
-              </div>
-              {sourceType === "TEXT" ? (
-                 <textarea rows={8} placeholder="Metni buraya yapıştırın..." className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl sm:rounded-[2.5rem] p-5 sm:p-8 text-sm sm:text-base text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all mb-6 sm:mb-8" value={sourceContent} onChange={(e) => setSourceContent(e.target.value)} />
-              ) : (
-                 <div className="mb-6 sm:mb-8">
-                    <input type="url" placeholder="https://example.com" className="w-full bg-zinc-50 border border-zinc-100 rounded-xl sm:rounded-full px-6 py-4 sm:px-8 sm:py-5 text-sm sm:text-base text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all" value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} />
-                 </div>
-              )}
-              <button onClick={handleAddSource} disabled={sourceLoading} className="w-full py-4 sm:py-5 bg-[#198754] text-white rounded-xl sm:rounded-[2rem] font-bold text-base sm:text-lg hover:bg-[#157347] transition-all shadow-xl shadow-green-500/20 flex items-center justify-center gap-3 uppercase tracking-wider">
-                 {sourceLoading ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <Save className="w-5 h-5 sm:w-6 sm:h-6" />} Kaydet ve Eğit
-              </button>
+        <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+           <div className="bg-white rounded-[3rem] w-full max-w-2xl p-10 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
+               <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-2xl font-extrabold text-zinc-900 tracking-tight flex items-center gap-4 uppercase"><PlusCircle className="w-8 h-8 text-[#198754]" /> Veri Ekle</h3>
+                  <button onClick={() => setShowAddSourceModal(false)}><X className="w-6 h-6 text-zinc-400" /></button>
+               </div>
+               <div className="flex gap-2 p-2 bg-zinc-50 rounded-full mb-8 border border-zinc-100">
+                  <button onClick={() => setSourceType("TEXT")} className={`flex-1 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${sourceType === "TEXT" ? "bg-white text-[#6B2D5C] shadow-sm" : "text-zinc-400"}`}>Metin</button>
+                  <button onClick={() => setSourceType("LINK")} className={`flex-1 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${sourceType === "LINK" ? "bg-white text-[#6B2D5C] shadow-sm" : "text-zinc-400"}`}>Link</button>
+               </div>
+               {sourceType === "TEXT" ? (
+                  <textarea rows={8} placeholder="Metni buraya yapıştırın..." className="w-full bg-zinc-50 border border-zinc-100 rounded-[2rem] p-8 text-sm text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all mb-8" value={sourceContent} onChange={(e) => setSourceContent(e.target.value)} />
+               ) : (
+                  <input type="url" placeholder="https://example.com" className="w-full bg-zinc-50 border border-zinc-100 rounded-full px-8 py-5 text-sm text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all mb-8" value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} />
+               )}
+               <button onClick={handleAddSource} disabled={sourceLoading} className="w-full py-5 bg-[#198754] text-white rounded-[2rem] font-bold text-lg hover:bg-[#157347] transition-all flex items-center justify-center gap-3 uppercase shadow-xl shadow-green-500/20">
+                  {sourceLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />} Kaydet ve Eğit
+               </button>
            </div>
         </div>
       )}

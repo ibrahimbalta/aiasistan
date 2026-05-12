@@ -28,8 +28,26 @@ model Assistant {
   theme       String   @default("default")
   knowledge   KnowledgeBase[]
   chats       Chat[]
+  
+  // Telegram
   telegramToken String?
   telegramEnabled Boolean @default(false)
+
+  // WhatsApp Business API
+  whatsappToken     String?
+  whatsappPhoneId   String?
+  whatsappEnabled   Boolean @default(false)
+
+  // Instagram DM
+  instagramToken    String?
+  instagramEnabled  Boolean @default(false)
+
+  // White-Label & Customization
+  isWhiteLabel      Boolean @default(false)
+  customLogo        String?
+  removeBranding    Boolean @default(false)
+  customDomain      String?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
