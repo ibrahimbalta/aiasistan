@@ -76,7 +76,7 @@ export default async function DashboardPage() {
                 <p className="text-[10px] text-zinc-500 leading-relaxed mb-4">Asistanlarınızı yönetin, konuşmaları takip edin ve performansı artırın.</p>
                 <div className="w-24 h-24 mx-auto relative group-hover:scale-110 transition-transform">
                    <div className="absolute inset-0 bg-white/50 rounded-full blur-2xl" />
-                   <img src="https://cdni.iconscout.com/illustration/premium/thumb/robot-assistant-illustration-download-in-svg-png-gif-file-formats--chat-ai-artificial-intelligence-pack-science-technology-illustrations-4720138.png" alt="Robot" className="w-full h-full object-contain relative z-10" />
+                   <img src="/images/robot.png" alt="Robot" className="w-full h-full object-contain relative z-10" />
                 </div>
             </div>
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#D63384]/10 rounded-full blur-3xl" />
@@ -134,9 +134,18 @@ export default async function DashboardPage() {
             </div>
           ))}
           {assistants.length < 1 && (
-             <Link href="/dashboard/new" className="border-2 border-dashed border-zinc-100 rounded-[2.5rem] flex flex-col items-center justify-center p-8 hover:bg-zinc-50 transition-all text-zinc-400 hover:text-zinc-600 gap-3 min-h-[250px]">
-                <Plus className="w-8 h-8" />
-                <span className="font-bold text-sm uppercase tracking-wider">Yeni Asistan Ekle</span>
+             <Link href="/dashboard/new" className="border-2 border-dashed border-zinc-100 rounded-[2.5rem] flex flex-col items-center justify-center p-8 hover:bg-zinc-50 transition-all text-zinc-400 hover:text-zinc-600 gap-4 min-h-[300px] group">
+                <div className="w-20 h-20 relative group-hover:scale-110 transition-transform duration-500">
+                    <div className="absolute inset-0 bg-purple-200/50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <img src="/images/robot.png" alt="Robot" className="w-full h-full object-contain relative z-10 grayscale group-hover:grayscale-0 transition-all" />
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                    <span className="font-bold text-sm uppercase tracking-wider text-zinc-900">Henüz Bir Asistanınız Yok</span>
+                    <span className="text-[10px] font-medium text-zinc-400">İlk asistanınızı oluşturmak için tıklayın</span>
+                </div>
+                <div className="p-2 bg-[#6B2D5C] text-white rounded-full shadow-lg shadow-purple-900/20 group-hover:scale-110 transition-transform">
+                    <Plus className="w-5 h-5" />
+                </div>
              </Link>
           )}
       </div>

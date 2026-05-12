@@ -125,8 +125,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <span className="uppercase tracking-widest text-[11px]">Ayarlar</span>
           </Link>
 
-          <div className="p-6 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-sm">
-             <div className="flex items-center gap-4 mb-4">
+          <div className="p-6 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-sm relative overflow-hidden group">
+             <div className="flex items-center gap-4 mb-4 relative z-10">
                 <div className="w-10 h-10 rounded-xl bg-pink-500 flex items-center justify-center font-bold text-white shadow-lg shrink-0">
                    {user?.email?.[0].toUpperCase() || "A"}
                 </div>
@@ -137,10 +137,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
              </div>
              <button 
                onClick={handleSignOut}
-               className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 group"
+               className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 group relative z-10"
              >
                 <LogOut className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> ÇIKIŞ YAP
              </button>
+             {/* Floating Sidebar Robot */}
+             <div className="absolute -bottom-4 -left-4 w-24 h-24 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all pointer-events-none">
+                <img src="/images/robot.png" alt="Robot Mascot" className="w-full h-full object-contain" />
+             </div>
           </div>
         </div>
       </aside>
