@@ -142,7 +142,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       const res3 = await updateWhiteLabelSettings(assistantId, editData);
       
       if (res1.success && res2.success && res3.success) {
-        toast.success("Tüm ayarlar başarıyla güncellendi!");
+        toast.success("Ayarlar başarıyla kaydedildi!");
         loadAssistant();
       } else {
         toast.error("Bazı ayarlar kaydedilemedi.");
@@ -175,6 +175,22 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
 
   const shareUrl = useMemo(() => `${typeof window !== 'undefined' ? window.location.origin : ''}/chat/${assistantId}`, [assistantId]);
   const widgetCode = useMemo(() => `<iframe src="${shareUrl}" width="100%" height="700" frameborder="0" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);"></iframe>`, [shareUrl]);
+
+  // Theme Styles Helper (Dashboard Preview)
+  const getPreviewThemeStyles = () => {
+    const theme = editData.theme;
+    switch (theme) {
+      case "soft-purple": return { container: "bg-white", user: "bg-[#6B2D5C] text-white", bot: "bg-zinc-50 text-zinc-800" };
+      case "soft-blue": return { container: "bg-white", user: "bg-blue-600 text-white", bot: "bg-zinc-50 text-zinc-800" };
+      case "soft-emerald": return { container: "bg-white", user: "bg-emerald-600 text-white", bot: "bg-zinc-50 text-zinc-800" };
+      case "glass": return { container: "bg-gradient-to-br from-blue-400/20 to-purple-400/20", user: "bg-blue-600 text-white", bot: "bg-white/40 text-zinc-900" };
+      case "terminal": return { container: "bg-black", user: "bg-green-900 text-white", bot: "bg-black text-green-500" };
+      case "brutal": return { container: "bg-yellow-400", user: "bg-black text-white", bot: "bg-white text-black" };
+      case "neumorphic": return { container: "bg-zinc-100", user: "bg-zinc-100 shadow-inner text-zinc-900", bot: "bg-zinc-100 shadow-lg text-zinc-800" };
+      default: return { container: "bg-zinc-950", user: "bg-blue-600 text-white", bot: "bg-zinc-800 text-zinc-100" };
+    }
+  };
+  const ps = getPreviewThemeStyles();
 
   if (fetching) {
     return (
@@ -238,21 +254,21 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       {/* Content Area */}
       <div className="flex-1 min-h-0">
         {activeTab === "chat" && (
-          <div className="h-[600px] flex flex-col bg-white rounded-2xl sm:rounded-[3rem] border border-zinc-100 overflow-hidden shadow-sm animate-in slide-in-from-bottom-2">
+          <div className={`h-[600px] flex flex-col rounded-2xl sm:rounded-[3rem] border border-zinc-100 overflow-hidden shadow-sm animate-in slide-in-from-bottom-2 ${ps.container}`}>
             <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8">
               {messages.map((m, i) => (
                 <div key={i} className={`flex gap-3 sm:gap-4 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? "bg-[#6B2D5C] text-white" : "bg-zinc-100 text-[#D63384]"}`}>
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? (editData.theme.startsWith("soft") ? "bg-[#6B2D5C] text-white" : ps.bot) : ps.user}`}>
                     {m.role === "assistant" ? <Bot className="w-4 h-4 sm:w-5 sm:h-5" /> : <User className="w-4 h-4 sm:w-5 sm:h-5" />}
                   </div>
-                  <div className={`max-w-[85%] sm:max-w-[75%] p-4 sm:p-5 text-sm leading-relaxed ${m.role === "assistant" ? "bg-zinc-50 text-zinc-800 rounded-2xl rounded-tl-none border border-zinc-100" : "bg-[#D63384] text-white rounded-2xl rounded-br-none shadow-xl shadow-pink-500/10"}`}>
+                  <div className={`max-w-[85%] sm:max-w-[75%] p-4 sm:p-5 text-sm leading-relaxed ${m.role === "assistant" ? `${ps.bot} rounded-2xl rounded-tl-none border border-zinc-100` : `${ps.user} rounded-2xl rounded-br-none shadow-xl`}`}>
                     {m.content}
                   </div>
                 </div>
               ))}
               <div ref={chatEndRef} />
             </div>
-            <form onSubmit={handleSend} className="p-4 sm:p-6 bg-zinc-50/50 border-t border-zinc-100 flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <form onSubmit={handleSend} className="p-4 sm:p-6 bg-white/10 backdrop-blur-sm border-t border-zinc-100 flex flex-col sm:flex-row gap-3 sm:gap-4">
               <input type="text" placeholder="Asistanınızı test edin..." className="flex-1 bg-white border border-zinc-200 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all" value={input} onChange={(e) => setInput(e.target.value)} />
               <button disabled={loading} className="bg-[#6B2D5C] text-white py-3 sm:px-8 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#522246] transition-all flex items-center justify-center gap-2 shrink-0"><Send className="w-4 h-4 sm:w-5 sm:h-5" /> Gönder</button>
             </form>
@@ -302,16 +318,21 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                     <textarea rows={6} className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-6 py-4 text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#6B2D5C]" value={editData.personality} onChange={(e) => setEditData({...editData, personality: e.target.value})} />
                   </div>
                   <button onClick={handleUpdate} disabled={updating} className="w-full bg-[#6B2D5C] text-white py-5 rounded-[2rem] font-bold text-lg flex items-center justify-center gap-3 hover:bg-[#522246] transition-all shadow-xl shadow-purple-900/20 uppercase">
-                    {updating ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />} Kaydet
+                    {updating ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />} Ayarları Kaydet
                   </button>
                 </div>
              </div>
 
              <div className="space-y-8 bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-zinc-100 shadow-sm flex flex-col h-[600px] xl:h-auto">
-                <h3 className="text-lg sm:text-xl font-bold text-zinc-900 flex items-center gap-3 uppercase"><Palette className="w-5 h-5 text-[#D63384]" /> Temalar</h3>
+                <div className="flex items-center justify-between">
+                    <h3 className="text-lg sm:text-xl font-bold text-zinc-900 flex items-center gap-3 uppercase"><Palette className="w-5 h-5 text-[#D63384]" /> Görünüm Şablonları</h3>
+                    <button onClick={handleUpdate} disabled={updating} className="px-6 py-2 bg-[#D63384] text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-pink-500/10">
+                        {updating ? <Loader2 className="w-3 h-3 animate-spin" /> : "Şablonu Uygula"}
+                    </button>
+                </div>
                 <div className="grid grid-cols-2 gap-4 overflow-y-auto pr-2 scrollbar-hide flex-1 pb-4">
                   {THEMES.map(t => (
-                    <div key={t.id} onClick={() => setEditData({...editData, theme: t.id})} className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-4 relative overflow-hidden group ${editData.theme === t.id ? "border-[#D63384] bg-pink-50" : "border-zinc-50 bg-zinc-50 hover:border-zinc-200"}`}>
+                    <div key={t.id} onClick={() => setEditData({...editData, theme: t.id})} className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-4 relative overflow-hidden group ${editData.theme === t.id ? "border-[#D63384] bg-pink-50 scale-[1.02]" : "border-zinc-50 bg-zinc-50 hover:border-zinc-200"}`}>
                       <div className={`w-full h-16 rounded-2xl ${t.colors} flex items-center justify-center shadow-lg transition-transform group-hover:rotate-3 shrink-0`}>{t.icon}</div>
                       <div>
                         <div className="text-sm font-bold text-zinc-900 uppercase leading-none mb-1 truncate">{t.name}</div>
@@ -320,6 +341,10 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                       {editData.theme === t.id && <div className="absolute top-4 right-4 bg-[#D63384] text-white p-1 rounded-full"><Check className="w-3 h-3" /></div>}
                     </div>
                   ))}
+                </div>
+                <div className="p-4 bg-zinc-50 rounded-3xl border border-zinc-100 flex items-center gap-3">
+                    <Sparkles className="w-5 h-5 text-yellow-500" />
+                    <p className="text-[10px] font-bold text-zinc-500">Seçtiğiniz şablonun önizlemesini "Test Chat" sekmesinden görebilirsiniz.</p>
                 </div>
              </div>
           </div>
@@ -423,7 +448,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                       </button>
                    </div>
                 </div>
-                <button onClick={handleUpdate} disabled={updating} className="w-full py-5 bg-zinc-900 text-white rounded-[2rem] font-bold text-base uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-zinc-900/10">Kaydet</button>
+                <button onClick={handleUpdate} disabled={updating} className="w-full py-5 bg-zinc-900 text-white rounded-[2rem] font-bold text-base uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-zinc-900/10">Ayarları Uygula</button>
              </div>
 
              <div className="bg-white p-8 sm:p-10 rounded-[3rem] border border-zinc-100 shadow-sm space-y-8">
@@ -446,7 +471,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                       </button>
                    </div>
                 </div>
-                <button onClick={handleUpdate} disabled={updating} className="w-full py-5 bg-zinc-900 text-white rounded-[2rem] font-bold text-base uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-zinc-900/10">Kaydet</button>
+                <button onClick={handleUpdate} disabled={updating} className="w-full py-5 bg-zinc-900 text-white rounded-[2rem] font-bold text-base uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-zinc-900/10">Ayarları Uygula</button>
              </div>
           </div>
         )}
@@ -511,7 +536,7 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         )}
       </div>
 
-      {/* Modals... (Share and Widget modals as they were) */}
+      {/* Modals */}
       {showShareModal && (
         <div className="fixed inset-0 bg-[#6B2D5C]/40 backdrop-blur-md z-[100] flex items-center justify-center p-4">
            <div className="bg-white rounded-[3rem] w-full max-w-xl p-10 shadow-2xl border border-zinc-100 animate-in zoom-in duration-300">
