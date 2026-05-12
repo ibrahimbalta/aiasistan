@@ -270,6 +270,26 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
             sendBtn: "bg-[#002D72] text-white",
             icon: <Landmark className="w-5 h-5" />
         };
+      case "creative":
+        return {
+            container: "bg-white border-t-4 border-[#D63384]",
+            header: "bg-white text-[#D63384] border-b",
+            user: "bg-[#D63384] text-white",
+            bot: "bg-zinc-900 text-white",
+            input: "bg-zinc-100 text-zinc-900",
+            sendBtn: "bg-[#D63384] text-white",
+            icon: <Palette className="w-5 h-5" />
+        };
+      case "legal":
+        return {
+            container: "bg-[#FDFBF7]",
+            header: "bg-[#2C2420] text-[#D4C4A8]",
+            user: "bg-[#2C2420] text-[#D4C4A8]",
+            bot: "bg-white text-[#2C2420] border border-[#2C2420]/20",
+            input: "bg-white border-[#2C2420]/20 text-[#2C2420]",
+            sendBtn: "bg-[#2C2420] text-[#D4C4A8]",
+            icon: <Gavel className="w-5 h-5" />
+        };
       case "vibrant":
         return {
             container: "bg-cyan-950",

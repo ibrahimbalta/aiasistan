@@ -169,9 +169,74 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
           icon: <Monitor className="w-5 h-5 text-zinc-400" />,
           chip: "bg-zinc-100 shadow-[4px_4px_8px_#bebebe,-4px_-4px_8px_#ffffff] text-zinc-600 hover:shadow-inner"
         };
+      case "ecommerce":
+        return {
+          container: "bg-white border border-orange-100 shadow-xl shadow-orange-500/5 md:rounded-[3rem]",
+          header: "bg-orange-600 py-6 text-white shadow-lg",
+          userBubble: "bg-orange-600 text-white rounded-2xl shadow-md shadow-orange-600/20",
+          botBubble: "bg-zinc-50 text-zinc-800 rounded-2xl border border-zinc-100",
+          input: "bg-white border-zinc-200 text-zinc-900 rounded-2xl",
+          sendBtn: "bg-orange-600 text-white",
+          text: "text-orange-600 font-black",
+          subtext: "text-orange-200",
+          icon: <ShoppingBag className="w-5 h-5 text-white" />,
+          chip: "bg-white border-orange-100 text-orange-600 hover:bg-orange-50"
+        };
+      case "corporate":
+        return {
+          container: "bg-white border border-blue-900/10 shadow-2xl md:rounded-[3rem]",
+          header: "bg-[#002D72] py-6 text-white",
+          userBubble: "bg-[#002D72] text-white rounded-xl shadow-lg",
+          botBubble: "bg-zinc-50 text-[#002D72] border border-blue-900/10 rounded-xl",
+          input: "bg-white border-zinc-300 text-zinc-900",
+          sendBtn: "bg-[#002D72] text-white",
+          text: "text-[#002D72] font-extrabold",
+          subtext: "text-blue-200",
+          icon: <Landmark className="w-5 h-5 text-white" />,
+          chip: "bg-white border-blue-900/10 text-[#002D72] hover:bg-blue-50"
+        };
+      case "creative":
+        return {
+          container: "bg-white border-t-8 border-[#D63384] shadow-2xl md:rounded-[3rem]",
+          header: "bg-white py-8 text-[#D63384] border-b",
+          userBubble: "bg-[#D63384] text-white rounded-[2rem] shadow-xl shadow-pink-500/20",
+          botBubble: "bg-zinc-900 text-white rounded-[2rem]",
+          input: "bg-zinc-100 border-none text-zinc-900 placeholder-zinc-400 rounded-full",
+          sendBtn: "bg-[#D63384] text-white",
+          text: "text-[#D63384] font-black italic",
+          subtext: "text-zinc-400",
+          icon: <Palette className="w-6 h-6" />,
+          chip: "bg-white border-2 border-[#D63384] text-[#D63384] hover:bg-[#D63384] hover:text-white"
+        };
+      case "legal":
+        return {
+          container: "bg-[#FDFBF7] border border-[#2C2420]/10 shadow-2xl md:rounded-3xl",
+          header: "bg-[#2C2420] py-6 text-[#D4C4A8]",
+          userBubble: "bg-[#2C2420] text-[#D4C4A8] rounded-md",
+          botBubble: "bg-white text-[#2C2420] border border-[#2C2420]/20 rounded-md shadow-sm",
+          input: "bg-white border-[#2C2420]/20 text-[#2C2420] font-serif",
+          sendBtn: "bg-[#2C2420] text-[#D4C4A8]",
+          text: "text-[#2C2420] font-serif font-bold uppercase",
+          subtext: "text-[#D4C4A8]/60",
+          icon: <Gavel className="w-5 h-5" />,
+          chip: "bg-white border border-[#2C2420]/20 text-[#2C2420] hover:bg-[#FDFBF7]"
+        };
+      case "vibrant":
+        return {
+          container: "bg-cyan-950 border border-cyan-500/30 shadow-[0_0_50px_rgba(6,182,212,0.2)] md:rounded-[3rem]",
+          header: "bg-cyan-900/50 py-6 text-cyan-400 border-b border-cyan-500/30",
+          userBubble: "bg-cyan-500 text-black font-bold rounded-2xl shadow-[0_0_20px_rgba(6,182,212,0.4)]",
+          botBubble: "bg-zinc-900/80 text-cyan-100 border border-cyan-500/20 rounded-2xl",
+          input: "bg-cyan-900/40 border-cyan-500/30 text-cyan-100",
+          sendBtn: "bg-cyan-400 text-black shadow-[0_0_15px_rgba(34,211,238,0.5)]",
+          text: "text-cyan-400 font-black",
+          subtext: "text-cyan-800",
+          icon: <Zap className="w-5 h-5 text-cyan-400" />,
+          chip: "bg-cyan-900/50 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-black"
+        };
       default:
         return {
-          container: "bg-zinc-950 border border-zinc-800 shadow-2xl shadow-black/50",
+          container: "bg-zinc-950 border border-zinc-800 shadow-2xl shadow-black/50 md:rounded-[3rem]",
           header: "bg-zinc-900/50 border-b border-zinc-800 text-white",
           userBubble: "bg-blue-600 text-white rounded-2xl rounded-br-none",
           botBubble: "bg-zinc-800 text-zinc-100 rounded-2xl rounded-bl-none",
@@ -198,12 +263,12 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
 
   return (
     <div className={`h-[100dvh] flex items-center justify-center bg-zinc-100/50 transition-all overflow-hidden`}>
-      <div className={`w-full max-w-4xl h-full md:h-[90dvh] md:max-h-[850px] flex flex-col overflow-hidden transition-all duration-500 shadow-2xl md:rounded-[3rem] ${s.container}`}>
+      <div className={`w-full max-w-4xl h-full md:h-[90dvh] md:max-h-[850px] flex flex-col overflow-hidden transition-all duration-500 shadow-2xl ${s.container}`}>
         
         {/* Header */}
         <div className={`p-5 md:p-6 flex items-center justify-between shrink-0 relative z-10 ${s.header}`}>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-zinc-50 rounded-xl flex items-center justify-center shadow-inner">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl flex items-center justify-center shadow-inner">
               {s.icon}
             </div>
             <div>
