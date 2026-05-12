@@ -49,24 +49,28 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#FDFCFD] text-zinc-900 selection:bg-pink-100 selection:text-[#D63384]">
       {/* Navbar */}
-      <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 ${scrolled ? "bg-white/80 backdrop-blur-xl border-b border-zinc-100 py-4" : "bg-transparent py-8"}`}>
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="w-10 h-10 bg-[#6B2D5C] rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/20 group-hover:rotate-6 transition-transform">
-              <Bot className="w-6 h-6 text-white" />
+      <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 ${scrolled ? "bg-white/90 backdrop-blur-xl border-b border-zinc-100 py-3 sm:py-4" : "bg-transparent py-4 sm:py-8"}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-2">
+          {/* Custom Logo & Brand */}
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group cursor-pointer shrink-0">
+            <div className="relative">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-tr from-[#6B2D5C] to-[#D63384] rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/20 group-hover:rotate-6 transition-transform relative z-10">
+                <Bot className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              </div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition-opacity" />
             </div>
-            <span className="text-xl font-black uppercase tracking-tighter italic text-[#6B2D5C]">AI ASİSTAN</span>
-          </div>
+            <span className="text-base sm:text-xl font-black uppercase tracking-tighter italic text-[#6B2D5C] whitespace-nowrap">AI ASİSTAN</span>
+          </Link>
 
-          <div className="hidden md:flex items-center gap-10">
+          <div className="hidden lg:flex items-center gap-8">
             {["Sektörler", "Özellikler", "Nasıl Çalışır?", "Fiyatlandırma"].map((item) => (
-              <Link key={item} href="#" className="text-sm font-black uppercase tracking-widest text-zinc-400 hover:text-[#D63384] transition-colors">{item}</Link>
+              <Link key={item} href="#" className="text-[11px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#D63384] transition-colors">{item}</Link>
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-black uppercase tracking-widest text-[#6B2D5C] px-6 py-3 hover:bg-zinc-50 rounded-2xl transition-all">Giriş</Link>
-            <Link href="/register" className="bg-[#6B2D5C] text-white px-8 py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-purple-900/20 hover:bg-[#522246] transition-all hover:scale-105">Ücretsiz Başla</Link>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/login" className="text-[10px] sm:text-sm font-black uppercase tracking-widest text-[#D63384] px-4 sm:px-6 py-2.5 sm:py-3 bg-pink-50 border border-pink-100 rounded-xl sm:rounded-2xl transition-all hover:bg-pink-100 whitespace-nowrap">Giriş</Link>
+            <Link href="/register" className="bg-[#6B2D5C] text-white px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-black uppercase tracking-widest shadow-xl shadow-purple-900/20 hover:bg-[#522246] transition-all hover:scale-105 whitespace-nowrap">Ücretsiz Başla</Link>
           </div>
         </div>
       </nav>
@@ -259,7 +263,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-[#6B2D5C] rounded-xl flex items-center justify-center shadow-lg"><Bot className="w-6 h-6 text-white" /></div>
+                <div className="w-10 h-10 bg-gradient-to-tr from-[#6B2D5C] to-[#D63384] rounded-xl flex items-center justify-center shadow-lg"><Bot className="w-6 h-6 text-white" /></div>
                 <span className="text-xl font-black uppercase tracking-tighter italic text-[#6B2D5C]">AI ASİSTAN</span>
               </div>
               <p className="max-w-sm text-zinc-500 font-medium leading-relaxed mb-8">
