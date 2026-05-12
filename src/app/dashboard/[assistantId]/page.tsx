@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2, X, Copy, ExternalLink, Save, Palette, Layout, Check, Terminal, Zap, Sparkles, Diamond, Ghost, Monitor, BarChart3, Globe, Database as DatabaseIcon, ShoppingBag, Landmark, Gavel } from "lucide-react";
+import { MessageSquare, Send, Bot, User, Share2, Code, Settings, Trash2, FileText, PlusCircle, Loader2, X, Copy, ExternalLink, Save, Palette, Layout, Check, Terminal, Zap, Sparkles, Diamond, Ghost, Monitor, BarChart3, Globe, Database as DatabaseIcon, ShoppingBag, Landmark, Gavel, Headphones, Tag, RefreshCcw, Headset } from "lucide-react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { getAssistant, updateAssistant } from "@/actions/assistant-actions";
 import { deleteKnowledge, addKnowledge } from "@/actions/knowledge-actions";
@@ -101,6 +101,26 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ assistantId, question: userMsg, sessionId: "test-session" }),
+      });
+      const data = await response.json();
+      if (data.answer) setMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
+    } finally { setLoading(false); }
+  };
+
+  const handleQuickAction = (text: string) => {
+    if (loading) return;
+    setInput(text);
+    sendQuickMessage(text);
+  };
+
+  const sendQuickMessage = async (text: string) => {
+    setMessages(prev => [...prev, { role: "user", content: text }]);
+    setLoading(true);
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assistantId, question: text, sessionId: "test-session" }),
       });
       const data = await response.json();
       if (data.answer) setMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
@@ -214,6 +234,27 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                 </div>
               ))}
               <div ref={chatEndRef} />
+            </div>
+            <div className="px-4 sm:px-8 py-4 border-t border-zinc-50 overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-2">
+                    {[
+                        { label: "Sipariş Takibi", icon: <ShoppingBag className="w-4 h-4" /> },
+                        { label: "Destek Talebi", icon: <Headset className="w-4 h-4" /> },
+                        { label: "Teklif İste", icon: <FileText className="w-4 h-4" /> },
+                        { label: "Fiyat Bilgisi", icon: <Tag className="w-4 h-4" /> },
+                        { label: "İade İşlemleri", icon: <RefreshCcw className="w-4 h-4" /> },
+                        { label: "İnsan Temsilciye Bağlan", icon: <User className="w-4 h-4" /> },
+                    ].map((action, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => handleQuickAction(action.label)}
+                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-zinc-100 text-[10px] sm:text-xs font-bold text-zinc-600 hover:bg-zinc-50 transition-all whitespace-nowrap shadow-sm"
+                        >
+                            {action.icon}
+                            {action.label}
+                        </button>
+                    ))}
+                </div>
             </div>
             <form onSubmit={handleSend} className="p-4 sm:p-6 bg-zinc-50/50 border-t border-zinc-100 flex flex-col sm:flex-row gap-3 sm:gap-4">
               <input type="text" placeholder="Asistanınızı test edin..." className="flex-1 bg-white border border-zinc-200 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all" value={input} onChange={(e) => setInput(e.target.value)} />

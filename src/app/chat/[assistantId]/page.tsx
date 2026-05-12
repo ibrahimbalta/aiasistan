@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { Send, Bot, User, Loader2, Sparkles, Zap, Shield, Globe, Terminal, Layout, Monitor, Ghost, Diamond, ShoppingBag, Landmark, Palette, Gavel } from "lucide-react";
+import { Send, Bot, User, Loader2, Sparkles, Zap, Shield, Globe, Terminal, Layout, Monitor, Ghost, Diamond, ShoppingBag, Landmark, Palette, Gavel, Headphones, FileText, Tag, RefreshCcw } from "lucide-react";
 import { getChatAssistant } from "@/actions/assistant-actions";
 import { toast } from "react-hot-toast";
 
@@ -56,6 +56,36 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
     }
   };
 
+  const handleQuickAction = (text: string) => {
+    if (loading) return;
+    setInput(text);
+    // Otomatik gönderim için form submit'i tetikleyebiliriz veya doğrudan handleSend'e benzer bir mantık kurabiliriz.
+    // Şimdilik sadece input'a yazıp kullanıcıya kontrol şansı verelim veya doğrudan gönderelim.
+    // Doğrudan gönderim daha iyi bir deneyim:
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    
+    // State güncellenmesi asenkron olduğu için doğrudan text'i kullanan bir fonksiyon çağırmalıyız.
+    sendQuickMessage(text);
+  };
+
+  const sendQuickMessage = async (text: string) => {
+    setMessages(prev => [...prev, { role: "user", content: text }]);
+    setLoading(true);
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assistantId, question: text, sessionId: "public-session" }),
+      });
+      const data = await response.json();
+      if (data.answer) setMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
+    } catch (error) {
+      toast.error("Bir hata oluştu.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const theme = assistant?.theme || "default";
 
   const getThemeStyles = () => {
@@ -70,7 +100,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-blue-600 text-white",
           text: "text-zinc-800",
           subtext: "text-zinc-500",
-          icon: <Sparkles className="w-5 h-5 text-blue-600" />
+          icon: <Sparkles className="w-5 h-5 text-blue-600" />,
+          chip: "bg-white/20 border-white/30 text-zinc-800 hover:bg-white/30"
         };
       case "vibrant":
         return {
@@ -82,7 +113,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-cyan-500 text-black",
           text: "text-cyan-400",
           subtext: "text-cyan-800",
-          icon: <Zap className="w-5 h-5 animate-pulse" />
+          icon: <Zap className="w-5 h-5 animate-pulse" />,
+          chip: "bg-zinc-900 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
         };
       case "terminal":
         return {
@@ -94,7 +126,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-green-500 text-black",
           text: "text-green-500",
           subtext: "text-green-900",
-          icon: <Terminal className="w-5 h-5" />
+          icon: <Terminal className="w-5 h-5" />,
+          chip: "bg-black border-green-500 text-green-500 hover:bg-green-500/10"
         };
       case "brutal":
         return {
@@ -106,7 +139,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-black text-white",
           text: "text-black font-black",
           subtext: "text-black opacity-50",
-          icon: <Layout className="w-5 h-5 fill-black" />
+          icon: <Layout className="w-5 h-5 fill-black" />,
+          chip: "bg-white border-4 border-black text-black hover:bg-yellow-200"
         };
       case "neumorphic":
         return {
@@ -118,7 +152,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-[#D63384] text-white shadow-lg",
           text: "text-zinc-900 font-black",
           subtext: "text-zinc-500 font-bold",
-          icon: <Monitor className="w-5 h-5 text-zinc-400" />
+          icon: <Monitor className="w-5 h-5 text-zinc-400" />,
+          chip: "bg-zinc-100 shadow-[4px_4px_8px_#bebebe,-4px_-4px_8px_#ffffff] text-zinc-600 hover:shadow-inner"
         };
       case "ecommerce":
         return {
@@ -130,7 +165,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-orange-500 text-white shadow-orange-500/20",
           text: "text-zinc-900 font-black",
           subtext: "text-orange-200",
-          icon: <ShoppingBag className="w-5 h-5" />
+          icon: <ShoppingBag className="w-5 h-5" />,
+          chip: "bg-orange-50 border-orange-100 text-orange-600 hover:bg-orange-100"
         };
       case "corporate":
         return {
@@ -142,7 +178,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-[#002D72] text-white",
           text: "text-zinc-900 font-bold",
           subtext: "text-zinc-400",
-          icon: <Landmark className="w-5 h-5" />
+          icon: <Landmark className="w-5 h-5" />,
+          chip: "bg-white border border-[#002D72] text-[#002D72] hover:bg-blue-50"
         };
       case "creative":
         return {
@@ -154,7 +191,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-black text-white hover:bg-zinc-800",
           text: "text-black font-black",
           subtext: "text-zinc-400",
-          icon: <Palette className="w-5 h-5 text-yellow-400" />
+          icon: <Palette className="w-5 h-5 text-yellow-400" />,
+          chip: "bg-white border-2 border-black text-black hover:bg-[#D63384] hover:text-white"
         };
       case "legal":
         return {
@@ -166,7 +204,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-[#2C2420] text-[#D4C4A8]",
           text: "text-[#2C2420] font-bold",
           subtext: "text-[#4A3F35] opacity-60",
-          icon: <Gavel className="w-5 h-5" />
+          icon: <Gavel className="w-5 h-5" />,
+          chip: "bg-[#FDFBF7] border border-[#D4C4A8] text-[#2C2420] italic hover:bg-[#F3EFE7]"
         };
       default:
         return {
@@ -178,7 +217,8 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           sendBtn: "bg-white text-black",
           text: "text-white",
           subtext: "text-zinc-500",
-          icon: <Bot className="w-5 h-5 text-blue-500" />
+          icon: <Bot className="w-5 h-5 text-blue-500" />,
+          chip: "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
         };
     }
   };
@@ -235,8 +275,22 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
           <div ref={chatEndRef} />
         </div>
 
-        {/* Input Area */}
+         {/* Input Area */}
         <div className="p-4 md:p-8 shrink-0 relative z-10 bg-transparent border-t border-white/5">
+          {/* Quick Actions Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 scrollbar-hide no-scrollbar">
+            {QUICK_ACTIONS.map((action, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleQuickAction(action.label)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-[11px] md:text-xs font-bold whitespace-nowrap transition-all border shadow-sm ${s.chip || "bg-white border-zinc-100 text-zinc-600 hover:bg-zinc-50"}`}
+              >
+                {action.icon}
+                {action.label}
+              </button>
+            ))}
+          </div>
+
           <form onSubmit={handleSend} className="flex gap-2 md:gap-3 relative items-center">
             <input 
               type="text" 
