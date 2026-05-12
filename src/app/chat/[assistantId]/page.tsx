@@ -1,11 +1,20 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { Send, Bot, User, Loader2, Sparkles, Zap, Shield, Globe, Terminal, Layout, Monitor, Ghost, Diamond, ShoppingBag, Landmark, Palette, Gavel, Headphones, FileText, Tag, RefreshCcw } from "lucide-react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
+import { Send, Bot, User, Loader2, Sparkles, Zap, Shield, Globe, Terminal, Layout, Monitor, Ghost, Diamond, ShoppingBag, Landmark, Palette, Gavel, Headphones, FileText, Tag, RefreshCcw, Headset } from "lucide-react";
 import { getChatAssistant } from "@/actions/assistant-actions";
 import { toast } from "react-hot-toast";
 
-export default function PublicChatPage({ params }: { params: Promise<{ assistantId: string }> }) {
+const QUICK_ACTIONS = [
+  { label: "Sipariş Takibi", icon: <ShoppingBag className="w-4 h-4" /> },
+  { label: "Destek Talebi", icon: <Headset className="w-4 h-4" /> },
+  { label: "Teklif İste", icon: <FileText className="w-4 h-4" /> },
+  { label: "Fiyat Bilgisi", icon: <Tag className="w-4 h-4" /> },
+  { label: "İade İşlemleri", icon: <RefreshCcw className="w-4 h-4" /> },
+  { label: "İnsan Temsilciye Bağlan", icon: <User className="w-4 h-4" /> },
+];
+
+function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
   const [assistant, setAssistant] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
@@ -14,7 +23,9 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [assistantId, setAssistantId] = useState("");
 
-  useEffect(() => { params.then(p => setAssistantId(p.assistantId)); }, [params]);
+  useEffect(() => { 
+    params.then(p => setAssistantId(p.assistantId)); 
+  }, [params]);
 
   useEffect(() => {
     if (!assistantId) return;
@@ -36,35 +47,12 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || loading) return;
-    const userMsg = input.trim();
-    setMessages(prev => [...prev, { role: "user", content: userMsg }]);
+    sendQuickMessage(input.trim());
     setInput("");
-    setLoading(true);
-
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assistantId, question: userMsg, sessionId: "public-session" }),
-      });
-      const data = await response.json();
-      if (data.answer) setMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
-    } catch (error) {
-      toast.error("Bir hata oluştu.");
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleQuickAction = (text: string) => {
     if (loading) return;
-    setInput(text);
-    // Otomatik gönderim için form submit'i tetikleyebiliriz veya doğrudan handleSend'e benzer bir mantık kurabiliriz.
-    // Şimdilik sadece input'a yazıp kullanıcıya kontrol şansı verelim veya doğrudan gönderelim.
-    // Doğrudan gönderim daha iyi bir deneyim:
-    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
-    
-    // State güncellenmesi asenkron olduğu için doğrudan text'i kullanan bir fonksiyon çağırmalıyız.
     sendQuickMessage(text);
   };
 
@@ -314,4 +302,12 @@ export default function PublicChatPage({ params }: { params: Promise<{ assistant
       </div>
     </div>
   );
+}
+
+export default function PublicChatPage({ params }: { params: Promise<{ assistantId: string }> }) {
+    return (
+        <Suspense fallback={<div className="h-[100dvh] flex items-center justify-center bg-zinc-50"><Loader2 className="w-12 h-12 text-[#D63384] animate-spin" /></div>}>
+            <ChatContent params={params} />
+        </Suspense>
+    );
 }
