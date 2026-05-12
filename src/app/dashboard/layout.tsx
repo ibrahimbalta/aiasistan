@@ -156,9 +156,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               >
                 <Menu className="w-6 h-6" />
               </button>
-              <div className="flex items-center gap-3">
-                 <Sparkles className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-500 animate-pulse" />
-                 <span className="text-[9px] lg:text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] lg:tracking-[0.4em] whitespace-nowrap">YÖNETİM PANELİ V2.0</span>
+              <div className="flex items-center gap-2 sm:gap-3">
+                 <Sparkles className="w-4 h-4 text-yellow-500 animate-pulse" />
+                 <span className="text-[8px] sm:text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] sm:tracking-[0.4em] whitespace-nowrap">PANEL V2.0</span>
               </div>
            </div>
            
