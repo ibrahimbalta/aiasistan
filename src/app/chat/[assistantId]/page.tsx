@@ -78,6 +78,45 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
 
   const getThemeStyles = () => {
     switch (theme) {
+      case "soft-purple":
+        return {
+          container: "bg-white border border-zinc-100 shadow-[0_20px_50px_rgba(107,45,92,0.05)] md:rounded-[3rem]",
+          header: "bg-white border-b border-zinc-50 text-zinc-800 py-6",
+          userBubble: "bg-[#6B2D5C] text-white rounded-[1.5rem] rounded-br-none shadow-lg shadow-purple-900/10",
+          botBubble: "bg-zinc-50 text-zinc-800 rounded-[1.5rem] rounded-bl-none border border-zinc-100",
+          input: "bg-white shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-zinc-100 text-zinc-900 placeholder-zinc-400 rounded-full",
+          sendBtn: "bg-[#6B2D5C] text-white rounded-full",
+          text: "text-[#6B2D5C] font-extrabold",
+          subtext: "text-zinc-400",
+          icon: <Sparkles className="w-5 h-5 text-[#6B2D5C]" />,
+          chip: "bg-white border border-zinc-100 text-zinc-600 hover:bg-purple-50 hover:border-purple-100 hover:text-[#6B2D5C]"
+        };
+      case "soft-blue":
+        return {
+          container: "bg-white border border-zinc-100 shadow-[0_20px_50px_rgba(59,130,246,0.05)] md:rounded-[3rem]",
+          header: "bg-white border-b border-zinc-50 text-zinc-800 py-6",
+          userBubble: "bg-blue-600 text-white rounded-[1.5rem] rounded-br-none shadow-lg shadow-blue-600/10",
+          botBubble: "bg-zinc-50 text-zinc-800 rounded-[1.5rem] rounded-bl-none border border-zinc-100",
+          input: "bg-white shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-zinc-100 text-zinc-900 placeholder-zinc-400 rounded-full",
+          sendBtn: "bg-blue-600 text-white rounded-full",
+          text: "text-blue-600 font-extrabold",
+          subtext: "text-zinc-400",
+          icon: <Monitor className="w-5 h-5 text-blue-600" />,
+          chip: "bg-white border border-zinc-100 text-zinc-600 hover:bg-blue-50 hover:border-blue-100 hover:text-blue-600"
+        };
+      case "soft-emerald":
+        return {
+          container: "bg-white border border-zinc-100 shadow-[0_20px_50px_rgba(16,185,129,0.05)] md:rounded-[3rem]",
+          header: "bg-white border-b border-zinc-50 text-zinc-800 py-6",
+          userBubble: "bg-emerald-600 text-white rounded-[1.5rem] rounded-br-none shadow-lg shadow-emerald-600/10",
+          botBubble: "bg-zinc-50 text-zinc-800 rounded-[1.5rem] rounded-bl-none border border-zinc-100",
+          input: "bg-white shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-zinc-100 text-zinc-900 placeholder-zinc-400 rounded-full",
+          sendBtn: "bg-emerald-600 text-white rounded-full",
+          text: "text-emerald-600 font-extrabold",
+          subtext: "text-zinc-400",
+          icon: <Zap className="w-5 h-5 text-emerald-600" />,
+          chip: "bg-white border border-zinc-100 text-zinc-600 hover:bg-emerald-50 hover:border-emerald-100 hover:text-emerald-600"
+        };
       case "glass":
         return {
           container: "bg-gradient-to-br from-blue-400/20 to-purple-400/20 backdrop-blur-xl border border-white/30 shadow-[0_0_50px_rgba(0,0,0,0.1)]",
@@ -86,23 +125,10 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
           botBubble: "bg-white/40 text-zinc-900 rounded-2xl backdrop-blur-md border border-white/50",
           input: "bg-white/30 border-white/40 text-zinc-900 placeholder-zinc-500",
           sendBtn: "bg-blue-600 text-white",
-          text: "text-zinc-800",
+          text: "text-zinc-800 font-extrabold",
           subtext: "text-zinc-500",
           icon: <Sparkles className="w-5 h-5 text-blue-600" />,
           chip: "bg-white/20 border-white/30 text-zinc-800 hover:bg-white/30"
-        };
-      case "vibrant":
-        return {
-          container: "bg-zinc-950 border-2 border-cyan-500/50 shadow-[0_0_30px_rgba(6,182,212,0.2)]",
-          header: "bg-zinc-900 border-b border-cyan-500/30 text-cyan-400",
-          userBubble: "bg-cyan-600 text-white rounded-none border-l-4 border-white",
-          botBubble: "bg-zinc-800 text-cyan-50 rounded-none border-r-4 border-cyan-500",
-          input: "bg-zinc-900 border-cyan-900 text-cyan-400 placeholder-cyan-900",
-          sendBtn: "bg-cyan-500 text-black",
-          text: "text-cyan-400",
-          subtext: "text-cyan-800",
-          icon: <Zap className="w-5 h-5 animate-pulse" />,
-          chip: "bg-zinc-900 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
         };
       case "terminal":
         return {
@@ -112,7 +138,7 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
           botBubble: "bg-black text-green-500 border border-green-800",
           input: "bg-black border-green-900 text-green-500 placeholder-green-900",
           sendBtn: "bg-green-500 text-black",
-          text: "text-green-500",
+          text: "text-green-500 font-extrabold",
           subtext: "text-green-900",
           icon: <Terminal className="w-5 h-5" />,
           chip: "bg-black border-green-500 text-green-500 hover:bg-green-500/10"
@@ -143,58 +169,6 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
           icon: <Monitor className="w-5 h-5 text-zinc-400" />,
           chip: "bg-zinc-100 shadow-[4px_4px_8px_#bebebe,-4px_-4px_8px_#ffffff] text-zinc-600 hover:shadow-inner"
         };
-      case "ecommerce":
-        return {
-          container: "bg-white border-none shadow-[0_20px_50px_rgba(255,107,0,0.15)] rounded-[2.5rem]",
-          header: "bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-[2.5rem] py-6",
-          userBubble: "bg-zinc-100 text-zinc-900 rounded-2xl rounded-br-none",
-          botBubble: "bg-orange-50 text-orange-900 rounded-2xl rounded-bl-none border border-orange-100",
-          input: "bg-zinc-50 border-zinc-100 rounded-full px-6 py-4 text-zinc-900",
-          sendBtn: "bg-orange-500 text-white shadow-orange-500/20",
-          text: "text-zinc-900 font-black",
-          subtext: "text-orange-200",
-          icon: <ShoppingBag className="w-5 h-5" />,
-          chip: "bg-orange-50 border-orange-100 text-orange-600 hover:bg-orange-100"
-        };
-      case "corporate":
-        return {
-          container: "bg-white border border-zinc-100 shadow-2xl rounded-none",
-          header: "bg-[#002D72] text-white py-6 px-8 flex items-center justify-between",
-          userBubble: "bg-[#002D72] text-white rounded-sm",
-          botBubble: "bg-[#F3F4F6] text-[#1F2937] border-l-4 border-[#002D72] rounded-sm",
-          input: "bg-white border border-zinc-200 rounded-none text-zinc-900",
-          sendBtn: "bg-[#002D72] text-white",
-          text: "text-zinc-900 font-bold",
-          subtext: "text-zinc-400",
-          icon: <Landmark className="w-5 h-5" />,
-          chip: "bg-white border border-[#002D72] text-[#002D72] hover:bg-blue-50"
-        };
-      case "creative":
-        return {
-          container: "bg-white border-[10px] border-zinc-900 shadow-[20px_20px_0px_#D63384]",
-          header: "bg-zinc-900 text-white p-6 font-black uppercase italic tracking-tighter",
-          userBubble: "bg-[#D63384] text-white skew-x-[-10deg]",
-          botBubble: "bg-yellow-400 text-black skew-x-[10deg] font-black",
-          input: "bg-zinc-100 border-b-4 border-black text-black font-black uppercase",
-          sendBtn: "bg-black text-white hover:bg-zinc-800",
-          text: "text-black font-black",
-          subtext: "text-zinc-400",
-          icon: <Palette className="w-5 h-5 text-yellow-400" />,
-          chip: "bg-white border-2 border-black text-black hover:bg-[#D63384] hover:text-white"
-        };
-      case "legal":
-        return {
-          container: "bg-[#FDFBF7] border border-[#D4C4A8] shadow-inner rounded-lg font-serif",
-          header: "bg-[#2C2420] text-[#D4C4A8] py-8 border-b-2 border-[#D4C4A8]",
-          userBubble: "bg-[#4A3F35] text-white rounded-none italic",
-          botBubble: "bg-white text-[#2C2420] border border-[#D4C4A8] rounded-none",
-          input: "bg-white border border-[#D4C4A8] text-[#2C2420] italic",
-          sendBtn: "bg-[#2C2420] text-[#D4C4A8]",
-          text: "text-[#2C2420] font-bold",
-          subtext: "text-[#4A3F35] opacity-60",
-          icon: <Gavel className="w-5 h-5" />,
-          chip: "bg-[#FDFBF7] border border-[#D4C4A8] text-[#2C2420] italic hover:bg-[#F3EFE7]"
-        };
       default:
         return {
           container: "bg-zinc-950 border border-zinc-800 shadow-2xl shadow-black/50",
@@ -203,7 +177,7 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
           botBubble: "bg-zinc-800 text-zinc-100 rounded-2xl rounded-bl-none",
           input: "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-600",
           sendBtn: "bg-white text-black",
-          text: "text-white",
+          text: "text-white font-extrabold",
           subtext: "text-zinc-500",
           icon: <Bot className="w-5 h-5 text-blue-500" />,
           chip: "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
@@ -229,26 +203,38 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
         {/* Header */}
         <div className={`p-5 md:p-6 flex items-center justify-between shrink-0 relative z-10 ${s.header}`}>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl flex items-center justify-center shadow-inner">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-zinc-50 rounded-xl flex items-center justify-center shadow-inner">
               {s.icon}
             </div>
             <div>
-              <h1 className={`text-lg md:text-xl font-black uppercase tracking-tight leading-none mb-1 ${s.text}`}>{assistant?.name}</h1>
+              <h1 className={`text-lg md:text-xl font-extrabold uppercase tracking-tight leading-none mb-1 ${s.text}`}>{assistant?.name}</h1>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${s.subtext}`}>● AKTİF</span>
               </div>
             </div>
           </div>
-          <button className="p-2 opacity-50 hover:opacity-100 transition-opacity"><Globe className="w-5 h-5" /></button>
+          <div className="flex items-center gap-2">
+             <button className="p-2 opacity-30 hover:opacity-100 transition-opacity"><Globe className="w-5 h-5" /></button>
+             <div className="w-10 h-10 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-300">
+                <User className="w-5 h-5" />
+             </div>
+          </div>
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 md:space-y-8 scrollbar-hide bg-transparent">
-          <div className="text-center py-8 md:py-12 opacity-10 flex flex-col items-center gap-4">
+        <div className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 md:space-y-8 scrollbar-hide bg-transparent relative">
+          <div className="text-center py-8 md:py-12 opacity-5 flex flex-col items-center gap-4">
             <Bot className={`w-12 h-12 md:w-16 md:h-16 ${s.text}`} />
-            <span className={`text-[10px] md:text-sm font-black uppercase tracking-[0.5em] ${s.text}`}>GÜVENLİ BAĞLANTI</span>
+            <span className={`text-[10px] md:text-sm font-black uppercase tracking-[0.5em] ${s.text}`}>SECURE CONNECTION</span>
           </div>
+
+          {/* Floating Robot Background Decor for Soft themes */}
+          {theme.startsWith("soft-") && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 opacity-[0.03] pointer-events-none">
+                <img src="/images/robot.png" alt="" className="w-full h-full object-contain mix-blend-multiply" />
+            </div>
+          )}
 
           {messages.map((m, i) => (
             <div key={i} className={`flex gap-3 md:gap-4 animate-in slide-in-from-bottom-4 duration-500 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
@@ -264,7 +250,7 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
         </div>
 
          {/* Input Area */}
-        <div className="p-4 md:p-8 shrink-0 relative z-10 bg-transparent border-t border-white/5">
+        <div className="p-4 md:p-8 shrink-0 relative z-10 bg-transparent">
           {/* Quick Actions Chips */}
           <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 scrollbar-hide no-scrollbar">
             {QUICK_ACTIONS.map((action, idx) => (
@@ -283,20 +269,20 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
             <input 
               type="text" 
               placeholder="Mesajınızı yazın..." 
-              className={`flex-1 px-5 md:px-8 py-4 md:py-5 rounded-2xl text-sm md:text-base font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all ${s.input}`}
+              className={`flex-1 px-6 md:px-10 py-5 md:py-6 text-sm md:text-base font-medium focus:outline-none focus:ring-4 focus:ring-purple-500/5 transition-all ${s.input}`}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
             <button 
               disabled={loading} 
               type="submit"
-              className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl shrink-0 ${s.sendBtn}`}
+              className={`w-14 h-14 md:w-20 md:h-20 flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl shrink-0 ${s.sendBtn}`}
             >
               {loading ? <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" /> : <Send className="w-5 h-5 md:w-6 md:h-6" />}
             </button>
           </form>
-          <p className={`mt-3 text-center text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] opacity-30 ${s.text}`}>
-            SECURE AI PROTOCOL V2.0
+          <p className={`mt-4 text-center text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] opacity-20 ${s.text}`}>
+            POWERED BY AI ASİSTAN V2.0
           </p>
         </div>
       </div>

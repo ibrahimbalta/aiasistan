@@ -9,6 +9,9 @@ import { updateTelegramSettings } from "@/actions/telegram-actions";
 import { toast } from "react-hot-toast";
 
 const THEMES = [
+  { id: "soft-purple", name: "Soft Lavender", desc: "Temiz ve modern mor tonları.", colors: "bg-purple-100 border-purple-200", icon: <Sparkles className="w-4 h-4 text-purple-600" /> },
+  { id: "soft-blue", name: "Ocean Breeze", desc: "Ferahlatıcı açık mavi tasarımı.", colors: "bg-blue-100 border-blue-200", icon: <Monitor className="w-4 h-4 text-blue-600" /> },
+  { id: "soft-emerald", name: "Emerald Clean", desc: "Enerjik yeşil ve beyaz uyumu.", colors: "bg-emerald-100 border-emerald-200", icon: <Zap className="w-4 h-4 text-emerald-600" /> },
   { id: "default", name: "Deep Abyss", desc: "Modern, katmanlı karanlık mod.", colors: "bg-zinc-950", icon: <Ghost className="w-4 h-4 text-white" /> },
   { id: "glass", name: "Floating Glass", desc: "Havada asılı premium cam tasarımı.", colors: "bg-blue-500/20 backdrop-blur", icon: <Sparkles className="w-4 h-4 text-blue-500" /> },
   { id: "ecommerce", name: "E-Commerce Pro", desc: "Canlı turuncu, e-ticaret odaklı.", colors: "bg-orange-500", icon: <ShoppingBag className="w-4 h-4 text-white" /> },
@@ -16,11 +19,9 @@ const THEMES = [
   { id: "creative", name: "Studio Pink", desc: "Yüksek kontrastlı, yaratıcı ajans stili.", colors: "bg-[#D63384]", icon: <Palette className="w-4 h-4 text-white" /> },
   { id: "legal", name: "Classic Legal", desc: "Ciddi, döküman ve hukuk temalı.", colors: "bg-[#2C2420]", icon: <Gavel className="w-4 h-4 text-[#D4C4A8]" /> },
   { id: "vibrant", name: "Cyber Protocol", desc: "Gelecekçi neon ve geometrik hatlar.", colors: "bg-cyan-950 border-cyan-500", icon: <Zap className="w-4 h-4 text-cyan-400" /> },
-  { id: "minimal", name: "Luxury Serif", desc: "Siyah ve altın uyumlu asil duruş.", colors: "bg-black border-amber-900", icon: <Diamond className="w-4 h-4 text-amber-500" /> },
   { id: "terminal", name: "Retro Terminal", desc: "80'ler bilgisayar terminali ruhu.", colors: "bg-black border-green-900", icon: <Terminal className="w-4 h-4 text-green-500" /> },
   { id: "brutal", name: "Neo-Brutalism", desc: "Sert gölgeler ve cesur kontrastlar.", colors: "bg-yellow-400 border-black border-2", icon: <Layout className="w-4 h-4 text-black" /> },
   { id: "neumorphic", name: "Soft Control", desc: "Fiziksel kabartma ve derinlik.", colors: "bg-zinc-100 shadow-inner", icon: <Monitor className="w-4 h-4 text-zinc-900" /> },
-  { id: "holographic", name: "Iridescent", desc: "Yanardöner kristalize renk geçişleri.", colors: "bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500", icon: <Sparkles className="w-4 h-4 text-white" /> },
 ];
 
 export default function AssistantDetailPage({ params }: { params: Promise<{ assistantId: string }> }) {
