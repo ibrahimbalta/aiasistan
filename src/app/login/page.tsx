@@ -45,34 +45,41 @@ export default function LoginPage() {
 
       <div className="w-full max-w-lg relative z-10">
         {/* Logo Area */}
-        <Link href="/" className="flex flex-col items-center gap-4 mb-12 group">
-          <div className="w-16 h-16 bg-[#6B2D5C] rounded-2xl flex items-center justify-center shadow-2xl shadow-purple-900/20 group-hover:rotate-6 transition-transform duration-500">
-            <Bot className="w-10 h-10 text-white" />
+        <Link href="/" className="flex flex-col items-center gap-4 mb-10 group">
+          <div className="relative">
+            <div className="w-16 h-16 bg-gradient-to-tr from-[#6B2D5C] to-[#D63384] rounded-2xl flex items-center justify-center shadow-2xl shadow-purple-900/40 group-hover:rotate-6 transition-transform duration-500 relative z-10">
+              <Bot className="w-10 h-10 text-white" />
+            </div>
+            <div className="absolute -inset-2 bg-gradient-to-r from-pink-500 to-purple-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
           </div>
           <div className="text-center">
             <span className="text-2xl font-black uppercase tracking-tighter italic text-[#6B2D5C]">AI ASİSTAN</span>
             <div className="flex items-center gap-2 justify-center mt-1">
+               <div className="h-px w-4 bg-zinc-200" />
                <Sparkles className="w-3 h-3 text-yellow-500" />
-               <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em]">Yönetim Paneli Giriş</span>
+               <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em]">Yönetim Paneli</span>
+               <div className="h-px w-4 bg-zinc-200" />
             </div>
           </div>
         </Link>
 
         {/* Login Card */}
-        <div className="bg-white rounded-[3rem] p-10 md:p-12 shadow-[0_50px_100px_-20px_rgba(107,45,92,0.1)] border border-zinc-100 animate-in fade-in slide-in-from-bottom-8 duration-700">
-          <h2 className="text-3xl font-black text-zinc-900 mb-2 uppercase italic tracking-tight">Tekrar Hoşgeldin!</h2>
-          <p className="text-zinc-500 font-medium mb-10">Asistanınızı yönetmek ve analizleri görmek için giriş yapın.</p>
+        <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] sm:rounded-[3.5rem] p-8 sm:p-12 shadow-[0_50px_100px_-20px_rgba(107,45,92,0.15)] border border-white relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-pink-50/50 rounded-full blur-3xl -z-10" />
+          
+          <h2 className="text-3xl sm:text-4xl font-black text-zinc-900 mb-3 uppercase italic tracking-tight leading-tight">Hoşgeldiniz</h2>
+          <p className="text-zinc-500 font-medium mb-10 text-sm sm:text-base">Panelinize erişmek için lütfen giriş yapın.</p>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-4">E-Posta Adresi</label>
+              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-5">E-Posta</label>
               <div className="relative group">
                 <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-300 group-focus-within:text-[#D63384] transition-colors" />
                 <input 
                   type="email" 
                   required
                   placeholder="adiniz@sirket.com" 
-                  className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl pl-16 pr-6 py-4 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all"
+                  className="w-full bg-white border border-zinc-100 rounded-2xl pl-16 pr-6 py-4.5 text-zinc-900 font-bold focus:outline-none focus:ring-4 focus:ring-pink-500/10 focus:border-[#D63384] transition-all placeholder:text-zinc-300"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -80,9 +87,9 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between ml-4 mr-2">
+              <div className="flex items-center justify-between ml-5 mr-2">
                 <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Şifre</label>
-                <Link href="#" className="text-[10px] font-black text-[#D63384] uppercase tracking-widest hover:underline">Şifremi Unuttum</Link>
+                <Link href="#" className="text-[10px] font-black text-[#D63384] uppercase tracking-widest hover:underline">Unuttum?</Link>
               </div>
               <div className="relative group">
                 <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-300 group-focus-within:text-[#D63384] transition-colors" />
@@ -90,7 +97,7 @@ export default function LoginPage() {
                   type="password" 
                   required
                   placeholder="••••••••" 
-                  className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl pl-16 pr-6 py-4 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all"
+                  className="w-full bg-white border border-zinc-100 rounded-2xl pl-16 pr-6 py-4.5 text-zinc-900 font-bold focus:outline-none focus:ring-4 focus:ring-pink-500/10 focus:border-[#D63384] transition-all placeholder:text-zinc-300"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -99,9 +106,10 @@ export default function LoginPage() {
 
             <button 
               disabled={loading}
-              className="w-full bg-[#6B2D5C] text-white py-5 rounded-[2rem] font-black text-lg shadow-xl shadow-purple-900/20 hover:bg-[#522246] transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest"
+              className="w-full bg-gradient-to-r from-[#6B2D5C] to-[#853974] text-white py-5 rounded-2xl sm:rounded-[2rem] font-black text-base sm:text-lg shadow-xl shadow-purple-900/20 hover:shadow-purple-900/30 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest relative overflow-hidden group"
             >
-              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <>Giriş Yap <ArrowRight className="w-5 h-5" /></>}
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <>Giriş Yap <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>}
             </button>
           </form>
 

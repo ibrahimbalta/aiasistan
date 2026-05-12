@@ -47,8 +47,11 @@ export default function RegisterPage() {
         {/* Left Side: Info */}
         <div className="hidden lg:block space-y-12 pr-12">
            <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-12 h-12 bg-[#6B2D5C] rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
-                <Bot className="w-7 h-7 text-white" />
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-tr from-[#6B2D5C] to-[#D63384] rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform relative z-10">
+                  <Bot className="w-7 h-7 text-white" />
+                </div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition-opacity" />
               </div>
               <span className="text-xl font-black uppercase tracking-tighter italic text-[#6B2D5C]">AI ASİSTAN</span>
            </Link>
@@ -69,27 +72,32 @@ export default function RegisterPage() {
         </div>
 
         {/* Right Side: Register Card */}
-        <div className="bg-white rounded-[3rem] p-10 md:p-12 shadow-[0_50px_100px_-20px_rgba(107,45,92,0.1)] border border-zinc-100 animate-in fade-in slide-in-from-right-8 duration-700">
+        <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] sm:rounded-[3.5rem] p-8 sm:p-12 shadow-[0_50px_100px_-20px_rgba(107,45,92,0.15)] border border-white relative overflow-hidden animate-in fade-in slide-in-from-right-8 duration-700">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-pink-50/50 rounded-full blur-3xl -z-10" />
+          
           <div className="mb-10 lg:hidden text-center">
              <Link href="/" className="inline-flex flex-col items-center gap-3">
-                <div className="w-12 h-12 bg-[#6B2D5C] rounded-xl flex items-center justify-center"><Bot className="w-6 h-6 text-white" /></div>
+                <div className="relative">
+                  <div className="w-12 h-12 bg-gradient-to-tr from-[#6B2D5C] to-[#D63384] rounded-xl flex items-center justify-center"><Bot className="w-6 h-6 text-white" /></div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl blur opacity-20" />
+                </div>
                 <span className="text-lg font-black uppercase italic text-[#6B2D5C]">AI ASİSTAN</span>
              </Link>
           </div>
           
-          <h2 className="text-3xl font-black text-zinc-900 mb-2 uppercase italic tracking-tight">Hesabını Oluştur</h2>
-          <p className="text-zinc-500 font-medium mb-10">Sadece 30 saniye içinde asistanınızı kurmaya başlayın.</p>
+          <h2 className="text-3xl font-black text-zinc-900 mb-3 uppercase italic tracking-tight leading-tight">Kaydolun</h2>
+          <p className="text-zinc-500 font-medium mb-10 text-sm">Hızlıca hesabınızı oluşturup asistanınızı kurun.</p>
 
           <form onSubmit={handleRegister} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-4">Ad Soyad</label>
+              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-5">Ad Soyad</label>
               <div className="relative group">
                 <User className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-300 group-focus-within:text-[#D63384] transition-colors" />
                 <input 
                   type="text" 
                   required
                   placeholder="Ahmet Yılmaz" 
-                  className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl pl-16 pr-6 py-4 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all"
+                  className="w-full bg-white border border-zinc-100 rounded-2xl pl-16 pr-6 py-4.5 text-zinc-900 font-bold focus:outline-none focus:ring-4 focus:ring-pink-500/10 focus:border-[#D63384] transition-all placeholder:text-zinc-300"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                 />
@@ -97,14 +105,14 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-4">E-Posta Adresi</label>
+              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-5">E-Posta</label>
               <div className="relative group">
                 <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-300 group-focus-within:text-[#D63384] transition-colors" />
                 <input 
                   type="email" 
                   required
                   placeholder="ahmet@sirket.com" 
-                  className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl pl-16 pr-6 py-4 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all"
+                  className="w-full bg-white border border-zinc-100 rounded-2xl pl-16 pr-6 py-4.5 text-zinc-900 font-bold focus:outline-none focus:ring-4 focus:ring-pink-500/10 focus:border-[#D63384] transition-all placeholder:text-zinc-300"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -112,14 +120,14 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-4">Şifre Belirleyin</label>
+              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-5">Şifre</label>
               <div className="relative group">
                 <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-300 group-focus-within:text-[#D63384] transition-colors" />
                 <input 
                   type="password" 
                   required
                   placeholder="••••••••" 
-                  className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl pl-16 pr-6 py-4 text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all"
+                  className="w-full bg-white border border-zinc-100 rounded-2xl pl-16 pr-6 py-4.5 text-zinc-900 font-bold focus:outline-none focus:ring-4 focus:ring-pink-500/10 focus:border-[#D63384] transition-all placeholder:text-zinc-300"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -128,9 +136,10 @@ export default function RegisterPage() {
 
             <button 
               disabled={loading}
-              className="w-full bg-[#D63384] text-white py-5 rounded-[2rem] font-black text-lg shadow-xl shadow-pink-500/20 hover:bg-[#c22e77] transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest"
+              className="w-full bg-gradient-to-r from-[#D63384] to-pink-500 text-white py-5 rounded-2xl sm:rounded-[2rem] font-black text-base sm:text-lg shadow-xl shadow-pink-500/20 hover:shadow-pink-500/30 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest relative overflow-hidden group"
             >
-              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <>Hesabımı Oluştur <ArrowRight className="w-5 h-5" /></>}
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <>Hesabımı Oluştur <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>}
             </button>
           </form>
 
