@@ -176,18 +176,120 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
   const shareUrl = useMemo(() => `${typeof window !== 'undefined' ? window.location.origin : ''}/chat/${assistantId}`, [assistantId]);
   const widgetCode = useMemo(() => `<iframe src="${shareUrl}" width="100%" height="700" frameborder="0" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);"></iframe>`, [shareUrl]);
 
-  // Theme Styles Helper (Dashboard Preview)
+  // Unified Theme Styles Helper (Dashboard Preview - High Contrast)
   const getPreviewThemeStyles = () => {
     const theme = editData.theme;
     switch (theme) {
-      case "soft-purple": return { container: "bg-white", user: "bg-[#6B2D5C] text-white", bot: "bg-zinc-50 text-zinc-800" };
-      case "soft-blue": return { container: "bg-white", user: "bg-blue-600 text-white", bot: "bg-zinc-50 text-zinc-800" };
-      case "soft-emerald": return { container: "bg-white", user: "bg-emerald-600 text-white", bot: "bg-zinc-50 text-zinc-800" };
-      case "glass": return { container: "bg-gradient-to-br from-blue-400/20 to-purple-400/20", user: "bg-blue-600 text-white", bot: "bg-white/40 text-zinc-900" };
-      case "terminal": return { container: "bg-black", user: "bg-green-900 text-white", bot: "bg-black text-green-500" };
-      case "brutal": return { container: "bg-yellow-400", user: "bg-black text-white", bot: "bg-white text-black" };
-      case "neumorphic": return { container: "bg-zinc-100", user: "bg-zinc-100 shadow-inner text-zinc-900", bot: "bg-zinc-100 shadow-lg text-zinc-800" };
-      default: return { container: "bg-zinc-950", user: "bg-blue-600 text-white", bot: "bg-zinc-800 text-zinc-100" };
+      case "soft-purple":
+        return {
+          container: "bg-white",
+          header: "bg-white text-zinc-800 border-b",
+          user: "bg-[#6B2D5C] text-white",
+          bot: "bg-zinc-50 text-zinc-900 border border-zinc-100",
+          input: "bg-white border-zinc-200 text-zinc-900",
+          sendBtn: "bg-[#6B2D5C] text-white",
+          icon: <Sparkles className="w-5 h-5 text-[#6B2D5C]" />
+        };
+      case "soft-blue":
+        return {
+          container: "bg-white",
+          header: "bg-white text-zinc-800 border-b",
+          user: "bg-blue-600 text-white",
+          bot: "bg-zinc-50 text-zinc-900 border border-zinc-100",
+          input: "bg-white border-zinc-200 text-zinc-900",
+          sendBtn: "bg-blue-600 text-white",
+          icon: <Monitor className="w-5 h-5 text-blue-600" />
+        };
+      case "soft-emerald":
+        return {
+          container: "bg-white",
+          header: "bg-white text-zinc-800 border-b",
+          user: "bg-emerald-600 text-white",
+          bot: "bg-zinc-50 text-zinc-900 border border-zinc-100",
+          input: "bg-white border-zinc-200 text-zinc-900",
+          sendBtn: "bg-emerald-600 text-white",
+          icon: <Zap className="w-5 h-5 text-emerald-600" />
+        };
+      case "glass":
+        return {
+          container: "bg-gradient-to-br from-blue-400/20 to-purple-400/20 backdrop-blur-xl",
+          header: "bg-white/30 text-zinc-900 border-b border-white/40",
+          user: "bg-blue-600 text-white shadow-lg",
+          bot: "bg-white/60 text-zinc-900 border border-white/80 shadow-sm",
+          input: "bg-white/40 border-white/60 text-zinc-900 placeholder-zinc-500",
+          sendBtn: "bg-blue-600 text-white",
+          icon: <Sparkles className="w-5 h-5 text-blue-600" />
+        };
+      case "terminal":
+        return {
+          container: "bg-black font-mono",
+          header: "bg-green-950/50 text-green-500 border-b border-green-500",
+          user: "bg-green-900 text-white border border-green-500",
+          bot: "bg-black text-green-400 border border-green-800",
+          input: "bg-black border-green-900 text-green-500 placeholder-green-900",
+          sendBtn: "bg-green-500 text-black",
+          icon: <Terminal className="w-5 h-5 text-green-500" />
+        };
+      case "brutal":
+        return {
+          container: "bg-yellow-400",
+          header: "bg-white text-black border-b-4 border-black font-black italic",
+          user: "bg-black text-white border-2 border-black",
+          bot: "bg-white text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
+          input: "bg-white border-4 border-black text-black font-bold",
+          sendBtn: "bg-black text-white",
+          icon: <Layout className="w-5 h-5 text-black" />
+        };
+      case "neumorphic":
+        return {
+          container: "bg-zinc-100",
+          header: "bg-zinc-100 text-zinc-800 border-b border-zinc-200",
+          user: "bg-zinc-100 shadow-[inset_6px_6px_12px_#bebebe,inset_-6px_-6px_12px_#ffffff] text-zinc-900",
+          bot: "bg-zinc-100 shadow-[6px_6px_12px_#bebebe,-6px_-6px_12px_#ffffff] text-zinc-800",
+          input: "bg-zinc-100 shadow-[inset_4px_4px_8px_#bebebe,inset_-4px_-4px_8px_#ffffff] text-zinc-900 border-none",
+          sendBtn: "bg-[#D63384] text-white",
+          icon: <Monitor className="w-5 h-5 text-zinc-400" />
+        };
+      case "ecommerce":
+        return {
+            container: "bg-white",
+            header: "bg-orange-600 text-white",
+            user: "bg-orange-600 text-white shadow-orange-200",
+            bot: "bg-zinc-50 text-zinc-900 border border-zinc-100",
+            input: "bg-white border-zinc-200 text-zinc-900",
+            sendBtn: "bg-orange-600 text-white",
+            icon: <ShoppingBag className="w-5 h-5" />
+        };
+      case "corporate":
+        return {
+            container: "bg-[#002D72]/5",
+            header: "bg-[#002D72] text-white",
+            user: "bg-[#002D72] text-white",
+            bot: "bg-white text-[#002D72] border border-[#002D72]/20 shadow-sm",
+            input: "bg-white border-zinc-200 text-zinc-900",
+            sendBtn: "bg-[#002D72] text-white",
+            icon: <Landmark className="w-5 h-5" />
+        };
+      case "vibrant":
+        return {
+            container: "bg-cyan-950",
+            header: "bg-cyan-900/50 text-cyan-400 border-b border-cyan-500/30",
+            user: "bg-cyan-500 text-black font-bold",
+            bot: "bg-cyan-950 text-cyan-300 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.1)]",
+            input: "bg-cyan-900/40 border-cyan-500/30 text-cyan-100 placeholder-cyan-700",
+            sendBtn: "bg-cyan-400 text-black",
+            icon: <Zap className="w-5 h-5" />
+        };
+      default:
+        return {
+          container: "bg-zinc-950",
+          header: "bg-zinc-900/80 text-white border-b border-zinc-800",
+          user: "bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-900/20",
+          bot: "bg-zinc-800 text-zinc-100 border border-zinc-700/50 shadow-sm",
+          input: "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-600",
+          sendBtn: "bg-white text-black",
+          icon: <Bot className="w-5 h-5 text-blue-500" />
+        };
     }
   };
   const ps = getPreviewThemeStyles();
@@ -255,22 +357,31 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       <div className="flex-1 min-h-0">
         {activeTab === "chat" && (
           <div className={`h-[600px] flex flex-col rounded-2xl sm:rounded-[3rem] border border-zinc-100 overflow-hidden shadow-sm animate-in slide-in-from-bottom-2 ${ps.container}`}>
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8">
+            {/* Preview Header */}
+            <div className={`px-6 py-4 flex items-center justify-between ${ps.header}`}>
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">{ps.icon}</div>
+                    <span className="text-sm font-black uppercase tracking-tight">{assistant?.name}</span>
+                </div>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8 scrollbar-hide">
               {messages.map((m, i) => (
                 <div key={i} className={`flex gap-3 sm:gap-4 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? (editData.theme.startsWith("soft") ? "bg-[#6B2D5C] text-white" : ps.bot) : ps.user}`}>
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${m.role === "assistant" ? ps.bot : ps.user}`}>
                     {m.role === "assistant" ? <Bot className="w-4 h-4 sm:w-5 sm:h-5" /> : <User className="w-4 h-4 sm:w-5 sm:h-5" />}
                   </div>
-                  <div className={`max-w-[85%] sm:max-w-[75%] p-4 sm:p-5 text-sm leading-relaxed ${m.role === "assistant" ? `${ps.bot} rounded-2xl rounded-tl-none border border-zinc-100` : `${ps.user} rounded-2xl rounded-br-none shadow-xl`}`}>
+                  <div className={`max-w-[85%] sm:max-w-[75%] p-4 sm:p-5 text-sm leading-relaxed ${m.role === "assistant" ? `${ps.bot} rounded-2xl rounded-tl-none` : `${ps.user} rounded-2xl rounded-br-none shadow-xl`}`}>
                     {m.content}
                   </div>
                 </div>
               ))}
               <div ref={chatEndRef} />
             </div>
-            <form onSubmit={handleSend} className="p-4 sm:p-6 bg-white/10 backdrop-blur-sm border-t border-zinc-100 flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <input type="text" placeholder="Asistanınızı test edin..." className="flex-1 bg-white border border-zinc-200 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all" value={input} onChange={(e) => setInput(e.target.value)} />
-              <button disabled={loading} className="bg-[#6B2D5C] text-white py-3 sm:px-8 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#522246] transition-all flex items-center justify-center gap-2 shrink-0"><Send className="w-4 h-4 sm:w-5 sm:h-5" /> Gönder</button>
+            <form onSubmit={handleSend} className="p-4 sm:p-6 bg-white/5 backdrop-blur-md border-t border-white/10 flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <input type="text" placeholder="Asistanınızı test edin..." className={`flex-1 rounded-xl sm:rounded-2xl px-5 py-3 sm:px-6 sm:py-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D63384] transition-all ${ps.input}`} value={input} onChange={(e) => setInput(e.target.value)} />
+              <button disabled={loading} className={`py-3 sm:px-8 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm uppercase tracking-wider hover:scale-105 transition-all flex items-center justify-center gap-2 shrink-0 ${ps.sendBtn}`}><Send className="w-4 h-4 sm:w-5 sm:h-5" /> Gönder</button>
             </form>
           </div>
         )}
