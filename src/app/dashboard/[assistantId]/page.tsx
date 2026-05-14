@@ -159,7 +159,13 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
       let content = sourceContent;
       if (sourceType === "LINK") {
         const scrape = await scrapeUrl(sourceUrl);
-        if (!scrape.success) throw new Error(scrape.error);
+        if (!scrape.success) {
+          // Engellenme durumunda otomatik Metin moduna geçiş
+          setSourceType("TEXT");
+          toast.error("Bu site otomatik taramaya izin vermiyor. Lütfen içeriği kopyalayıp Metin alanına yapıştırın.");
+          setSourceLoading(false);
+          return;
+        }
         content = scrape.content;
       }
       const result = await addKnowledge(assistantId, sourceType === "TEXT" ? "TXT" : "LINK", content, sourceType === "TEXT" ? "Metin" : sourceUrl);
@@ -169,7 +175,9 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
         setSourceContent(""); setSourceUrl("");
         loadAssistant();
       }
-    } catch (e: any) { toast.error(e.message); }
+    } catch (e: any) { 
+      toast.error(e.message); 
+    }
     finally { setSourceLoading(false); }
   };
 
@@ -711,7 +719,12 @@ export default function AssistantDetailPage({ params }: { params: Promise<{ assi
                {sourceType === "TEXT" ? (
                   <textarea rows={8} placeholder="Metni buraya yapıştırın..." className="w-full bg-zinc-50 border border-zinc-100 rounded-[2rem] p-8 text-sm text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all mb-8" value={sourceContent} onChange={(e) => setSourceContent(e.target.value)} />
                ) : (
-                  <input type="url" placeholder="https://example.com" className="w-full bg-zinc-50 border border-zinc-100 rounded-full px-8 py-5 text-sm text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all mb-8" value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} />
+                 <div className="space-y-3 mb-8">
+                   <input type="url" placeholder="https://example.com" className="w-full bg-zinc-50 border border-zinc-100 rounded-full px-8 py-5 text-sm text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#198754] transition-all" value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} />
+                   <p className="text-[10px] text-zinc-400 font-bold px-6 flex items-center gap-2">
+                      <ShieldCheck className="w-3 h-3 text-[#D63384]" /> Hepsiemlak, Sahibinden vb. korumalı siteler için "Metin" sekmesini kullanın.
+                   </p>
+                 </div>
                )}
                <button onClick={handleAddSource} disabled={sourceLoading} className="w-full py-5 bg-[#198754] text-white rounded-[2rem] font-bold text-lg hover:bg-[#157347] transition-all flex items-center justify-center gap-3 uppercase shadow-xl shadow-green-500/20">
                   {sourceLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />} Kaydet ve Eğit
