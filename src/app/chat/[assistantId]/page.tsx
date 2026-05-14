@@ -297,7 +297,7 @@ function ChatContent({ params }: { params: Promise<{ assistantId: string }> }) {
           {/* Floating Robot Background Decor for Soft themes */}
           {theme.startsWith("soft-") && (
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 opacity-[0.03] pointer-events-none">
-                <img src="/images/robot.png" alt="" className="w-full h-full object-contain mix-blend-multiply" />
+                <img src="/images/robot.png" alt="" className="w-full h-full object-contain" />
             </div>
           )}
 
